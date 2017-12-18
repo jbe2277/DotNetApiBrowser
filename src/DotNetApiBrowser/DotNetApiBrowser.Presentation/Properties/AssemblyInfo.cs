@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Windows;
 
-[assembly: AssemblyTitle("DotNetApiBrowser.Presentation")]
+[assembly: AssemblyTitle("Waf DotNetApiBrowser")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 
