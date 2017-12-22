@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.Threading.Tasks;
 using System.Waf.Applications;
+using Waf.CodeAnalysis.AssemblyReaders;
 using Waf.DotNetApiBrowser.Applications.ViewModels;
 
 namespace Waf.DotNetApiBrowser.Applications.Controllers
@@ -22,9 +24,10 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         {
         }
 
-        public void Run()
+        public async void Run()
         {
             ShellViewModel.Show();
+            ShellViewModel.SetCode(await Task.Run(() => AssemblyReader.Read(typeof(ExportAttribute).Assembly.Location)));
         }
 
         public void Shutdown()

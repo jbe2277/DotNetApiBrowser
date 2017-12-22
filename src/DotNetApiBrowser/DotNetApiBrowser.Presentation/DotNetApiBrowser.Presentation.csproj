@@ -58,6 +58,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Controls\CodeEditor.cs" />
+    <Compile Include="Controls\CodeHighlightColors.cs" />
+    <Compile Include="Controls\CodeHighlighter.cs" />
+    <Compile Include="Controls\CodeHighlightingColorizer.cs" />
     <Compile Include="Views\ShellWindow.xaml.cs">
       <DependentUpon>ShellWindow.xaml</DependentUpon>
     </Compile>
@@ -91,11 +95,21 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="AvalonEdit">
+      <Version>5.0.4</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces">
+      <Version>2.6.1</Version>
+    </PackageReference>
     <PackageReference Include="System.Waf.Wpf">
       <Version>4.1.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Resources\CodeEditorResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ShellWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
