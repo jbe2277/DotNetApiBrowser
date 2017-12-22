@@ -14,6 +14,8 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
             ExitCommand = new DelegateCommand(Close);
         }
 
+        public static string Title => ApplicationInfo.ProductName;
+
         public ICommand ExitCommand { get; }
 
         public ICommand OpenCommand { get; set; }

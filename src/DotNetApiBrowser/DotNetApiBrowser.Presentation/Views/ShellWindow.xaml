@@ -6,7 +6,7 @@
         xmlns:vm="clr-namespace:Waf.DotNetApiBrowser.Applications.ViewModels;assembly=Waf.DotNetApiBrowser.Applications"
         xmlns:ctrl="clr-namespace:Waf.DotNetApiBrowser.Presentation.Controls"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:ShellViewModel}"
-        Title="{Binding Title}" Width="800" Height="600">
+        Title="{Binding Title, Mode=OneTime}" Width="800" Height="600">
     
     <DockPanel>
         <Menu DockPanel.Dock="Top">
