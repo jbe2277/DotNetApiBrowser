@@ -47,10 +47,17 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Controllers\ModuleController.cs" />
+    <Compile Include="Controllers\OpenFromNugetController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\CodeEditorViewModel.cs" />
+    <Compile Include="ViewModels\OpenFromNugetViewModel.cs" />
+    <Compile Include="ViewModels\SelectAssemblyViewModel.cs" />
+    <Compile Include="ViewModels\SelectPackageViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="Views\ICodeEditorView.cs" />
+    <Compile Include="Views\IOpenFromNugetView.cs" />
+    <Compile Include="Views\ISelectAssemblyView.cs" />
+    <Compile Include="Views\ISelectPackageView.cs" />
     <Compile Include="Views\IShellView.cs" />
   </ItemGroup>
   <ItemGroup>

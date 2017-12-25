@@ -15,20 +15,25 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
     {
         private readonly IMessageService messageService;
         private readonly IFileDialogService fileDialogService;
+        private readonly ExportFactory<OpenFromNugetController> openFromNugetController;
         private readonly Lazy<ShellViewModel> shellViewModel;
         private readonly ExportFactory<CodeEditorViewModel> codeEditorViewModel;
-        private readonly AsyncDelegateCommand openCommand;
+        private readonly AsyncDelegateCommand openFileCommand;
+        private readonly DelegateCommand openFromNugetCommand;
         private readonly DelegateCommand closeAssemblyApiCommand;
         private readonly ObservableCollection<CodeEditorViewModel> assemblyApis;
 
         [ImportingConstructor]
-        public ModuleController(IMessageService messageService, IFileDialogService fileDialogService, Lazy<ShellViewModel> shellViewModel, ExportFactory<CodeEditorViewModel> codeEditorViewModel)
+        public ModuleController(IMessageService messageService, IFileDialogService fileDialogService, ExportFactory<OpenFromNugetController> openFromNugetController,
+            Lazy<ShellViewModel> shellViewModel, ExportFactory<CodeEditorViewModel> codeEditorViewModel)
         {
             this.messageService = messageService;
             this.fileDialogService = fileDialogService;
+            this.openFromNugetController = openFromNugetController;
             this.shellViewModel = shellViewModel;
             this.codeEditorViewModel = codeEditorViewModel;
-            openCommand = new AsyncDelegateCommand(Open);
+            openFileCommand = new AsyncDelegateCommand(OpenFile);
+            openFromNugetCommand = new DelegateCommand(OpenFromNuget);
             closeAssemblyApiCommand = new DelegateCommand(CloseAssemblyApi);
             assemblyApis = new ObservableCollection<CodeEditorViewModel>();
         }
@@ -41,22 +46,24 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
 
         public async void Run()
         {
-            ShellViewModel.OpenCommand = openCommand;
+            ShellViewModel.OpenFileCommand = openFileCommand;
+            ShellViewModel.OpenFromNugetCommand = openFromNugetCommand;
             ShellViewModel.CloseAssemblyApiCommand = closeAssemblyApiCommand;
             ShellViewModel.AssemblyApis = assemblyApis;
             ShellViewModel.Show();
-            var assembly = typeof(ExportAttribute).Assembly;
-            using (ShellViewModel.SetApplicationBusy())
-            {
-                AddAndSelectAssemblyApi(assembly.GetName().Name, await Task.Run(() => AssemblyReader.Read(assembly.Location)));
-            }
+            // TODO: Remove this
+            //var assembly = typeof(ExportAttribute).Assembly;
+            //using (ShellViewModel.SetApplicationBusy())
+            //{
+            //    AddAndSelectAssemblyApi(assembly.GetName().Name, await Task.Run(() => AssemblyReader.Read(assembly.Location)));
+            //}
         }
 
         public void Shutdown()
         {
         }
 
-        private async Task Open()
+        private async Task OpenFile()
         {
             var assemblyFileType = new FileType(".NET Assembly (*.dll, *.exe)", ".dll;*.exe");
             var allFileType = new FileType("All files (*.*)", ".*");
@@ -73,6 +80,14 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             catch (Exception e)
             {
                 messageService.ShowError(ShellViewModel.View, "Could not read the file. Error: " + e);
+            }
+        }
+
+        private void OpenFromNuget()
+        {
+            using (var controller = openFromNugetController.CreateExport())
+            {
+                controller.Value.Run(ShellViewModel.View);
             }
         }
 

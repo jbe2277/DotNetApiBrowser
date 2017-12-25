@@ -10,8 +10,9 @@
     <DockPanel x:Name="rootContainer">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
-                <MenuItem Header="_Open" Command="{Binding OpenCommand}"/>
-                <MenuItem Header="E_xit" Command="{Binding ExitCommand}"/>
+                <MenuItem Header="_Open" Command="{Binding OpenFileCommand, Mode=OneTime}"/>
+                <MenuItem Header="Open from _NuGet" Command="{Binding OpenFromNugetCommand, Mode=OneTime}"/>
+                <MenuItem Header="E_xit" Command="{Binding ExitCommand, Mode=OneTime}"/>
             </MenuItem>
         </Menu>
 

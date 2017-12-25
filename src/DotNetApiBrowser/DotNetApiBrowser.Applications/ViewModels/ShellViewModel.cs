@@ -26,7 +26,9 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
 
         public ICommand ExitCommand { get; }
 
-        public ICommand OpenCommand { get; set; }
+        public ICommand OpenFileCommand { get; set; }
+
+        public ICommand OpenFromNugetCommand { get; set; }
 
         public ICommand CloseAssemblyApiCommand { get; set; }
 
