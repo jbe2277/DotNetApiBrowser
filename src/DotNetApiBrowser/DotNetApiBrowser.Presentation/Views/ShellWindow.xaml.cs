@@ -10,10 +10,5 @@ namespace Waf.DotNetApiBrowser.Presentation.Views
         {
             InitializeComponent();
         }
-
-        public void SetCode(string code)
-        {
-            codeEditor.Text = code;
-        }
     }
 }

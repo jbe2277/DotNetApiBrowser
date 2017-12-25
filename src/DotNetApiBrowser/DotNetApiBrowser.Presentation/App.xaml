@@ -4,6 +4,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/ConverterResources.xaml"/>
                 <ResourceDictionary Source="Resources/CodeEditorResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

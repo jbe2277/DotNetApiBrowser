@@ -7,7 +7,5 @@ namespace Waf.DotNetApiBrowser.Applications.Views
         void Show();
 
         void Close();
-
-        void SetCode(string code);
     }
 }

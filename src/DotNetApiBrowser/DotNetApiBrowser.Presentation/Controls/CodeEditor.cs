@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Waf;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Waf.DotNetApiBrowser.Presentation.Controls
 {
@@ -25,6 +26,14 @@ namespace Waf.DotNetApiBrowser.Presentation.Controls
             SearchPanel.Install(TextArea);
         }
 
+        public static DependencyProperty CodeProperty { get; } = DependencyProperty.Register("Code", typeof(string), typeof(CodeEditor), new PropertyMetadata(null, CodeChangedCallback));
+
+        public string Code
+        {
+            get { return (string)GetValue(CodeProperty); }
+            set { SetValue(CodeProperty, value); }
+        }
+
         protected override void OnTextChanged(EventArgs e)
         {
             base.OnTextChanged(e);
@@ -36,6 +45,11 @@ namespace Waf.DotNetApiBrowser.Presentation.Controls
                 var compilation = CSharpCompilation.Create("MyCompilation").AddReferences(mscorlib).AddSyntaxTrees(tree);
                 return compilation.GetSemanticModel(tree);
             });
+        }
+
+        private static void CodeChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((CodeEditor)d).Text = (string)e.NewValue;
         }
     }
 }

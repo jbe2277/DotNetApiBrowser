@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Threading.Tasks;
 using System.Waf.Applications;
 using System.Waf.Applications.Services;
 using Waf.CodeAnalysis.AssemblyReaders;
+using Waf.DotNetApiBrowser.Applications.DataModels;
 using Waf.DotNetApiBrowser.Applications.ViewModels;
 
 namespace Waf.DotNetApiBrowser.Applications.Controllers
@@ -15,6 +18,8 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         private readonly IFileDialogService fileDialogService;
         private readonly Lazy<ShellViewModel> shellViewModel;
         private readonly AsyncDelegateCommand openCommand;
+        private readonly DelegateCommand closeAssemblyApiCommand;
+        private readonly ObservableCollection<AssemblyApiDataModel> assemblyApiDataModels;
 
         [ImportingConstructor]
         public ModuleController(IMessageService messageService, IFileDialogService fileDialogService, Lazy<ShellViewModel> shellViewModel)
@@ -23,6 +28,8 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             this.fileDialogService = fileDialogService;
             this.shellViewModel = shellViewModel;
             openCommand = new AsyncDelegateCommand(Open);
+            closeAssemblyApiCommand = new DelegateCommand(CloseAssemblyApi);
+            assemblyApiDataModels = new ObservableCollection<AssemblyApiDataModel>();
         }
 
         private ShellViewModel ShellViewModel => shellViewModel.Value;
@@ -34,8 +41,11 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         public async void Run()
         {
             ShellViewModel.OpenCommand = openCommand;
+            ShellViewModel.CloseAssemblyApiCommand = closeAssemblyApiCommand;
+            ShellViewModel.AssemblyApiDataModels = assemblyApiDataModels;
             ShellViewModel.Show();
-            ShellViewModel.SetCode(await Task.Run(() => AssemblyReader.Read(typeof(ExportAttribute).Assembly.Location)));
+            var assembly = typeof(ExportAttribute).Assembly;
+            AddAndSelectAssemblyApi(new AssemblyApiDataModel(assembly.GetName().Name, await Task.Run(() => AssemblyReader.Read(assembly.Location))));
         }
 
         public void Shutdown()
@@ -51,12 +61,23 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
 
             try
             {
-                ShellViewModel.SetCode(await Task.Run(() => AssemblyReader.Read(result.FileName)));
+                AddAndSelectAssemblyApi(new AssemblyApiDataModel(Path.GetFileNameWithoutExtension(result.FileName), await Task.Run(() => AssemblyReader.Read(result.FileName))));
             }
             catch (Exception e)
             {
                 messageService.ShowError(ShellViewModel.View, "Could not read the file. Error: " + e);
             }
+        }
+
+        private void CloseAssemblyApi()
+        {
+            assemblyApiDataModels.Remove(ShellViewModel.SelectedAssemblyApiDataModel);
+        }
+
+        private void AddAndSelectAssemblyApi(AssemblyApiDataModel dataModel)
+        {
+            assemblyApiDataModels.Add(dataModel);
+            ShellViewModel.SelectedAssemblyApiDataModel = dataModel;
         }
     }
 }
