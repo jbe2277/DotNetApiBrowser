@@ -6,7 +6,7 @@
              xmlns:vm="clr-namespace:Waf.DotNetApiBrowser.Applications.ViewModels;assembly=Waf.DotNetApiBrowser.Applications"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:SelectPackageViewModel}"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-            
-    </Grid>
+    <StackPanel>
+        <TextBlock Text="Select package:"/>
+    </StackPanel>
 </UserControl>
