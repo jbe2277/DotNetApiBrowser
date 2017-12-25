@@ -2,7 +2,6 @@
 using System.ComponentModel.Composition;
 using System.Waf.Applications;
 using System.Windows.Input;
-using Waf.DotNetApiBrowser.Applications.DataModels;
 using Waf.DotNetApiBrowser.Applications.Views;
 
 namespace Waf.DotNetApiBrowser.Applications.ViewModels
@@ -10,7 +9,7 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
     [Export]
     public class ShellViewModel : ViewModel<IShellView>
     {
-        private AssemblyApiDataModel selectedAssemblyApiDataModel;
+        private CodeEditorViewModel selectedAssemblyApi;
 
         [ImportingConstructor]
         public ShellViewModel(IShellView view) : base(view)
@@ -26,12 +25,12 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
 
         public ICommand CloseAssemblyApiCommand { get; set; }
 
-        public IReadOnlyList<AssemblyApiDataModel> AssemblyApiDataModels { get; set; }
+        public IReadOnlyList<CodeEditorViewModel> AssemblyApis { get; set; }
 
-        public AssemblyApiDataModel SelectedAssemblyApiDataModel
+        public CodeEditorViewModel SelectedAssemblyApi
         {
-            get => selectedAssemblyApiDataModel;
-            set => SetProperty(ref selectedAssemblyApiDataModel, value);
+            get => selectedAssemblyApi;
+            set => SetProperty(ref selectedAssemblyApi, value);
         }
 
         public void Show()

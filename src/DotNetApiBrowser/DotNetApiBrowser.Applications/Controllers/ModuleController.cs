@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Waf.Applications;
 using System.Waf.Applications.Services;
 using Waf.CodeAnalysis.AssemblyReaders;
-using Waf.DotNetApiBrowser.Applications.DataModels;
 using Waf.DotNetApiBrowser.Applications.ViewModels;
 
 namespace Waf.DotNetApiBrowser.Applications.Controllers
@@ -17,19 +16,21 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         private readonly IMessageService messageService;
         private readonly IFileDialogService fileDialogService;
         private readonly Lazy<ShellViewModel> shellViewModel;
+        private readonly ExportFactory<CodeEditorViewModel> codeEditorViewModel;
         private readonly AsyncDelegateCommand openCommand;
         private readonly DelegateCommand closeAssemblyApiCommand;
-        private readonly ObservableCollection<AssemblyApiDataModel> assemblyApiDataModels;
+        private readonly ObservableCollection<CodeEditorViewModel> assemblyApis;
 
         [ImportingConstructor]
-        public ModuleController(IMessageService messageService, IFileDialogService fileDialogService, Lazy<ShellViewModel> shellViewModel)
+        public ModuleController(IMessageService messageService, IFileDialogService fileDialogService, Lazy<ShellViewModel> shellViewModel, ExportFactory<CodeEditorViewModel> codeEditorViewModel)
         {
             this.messageService = messageService;
             this.fileDialogService = fileDialogService;
             this.shellViewModel = shellViewModel;
+            this.codeEditorViewModel = codeEditorViewModel;
             openCommand = new AsyncDelegateCommand(Open);
             closeAssemblyApiCommand = new DelegateCommand(CloseAssemblyApi);
-            assemblyApiDataModels = new ObservableCollection<AssemblyApiDataModel>();
+            assemblyApis = new ObservableCollection<CodeEditorViewModel>();
         }
 
         private ShellViewModel ShellViewModel => shellViewModel.Value;
@@ -42,10 +43,10 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         {
             ShellViewModel.OpenCommand = openCommand;
             ShellViewModel.CloseAssemblyApiCommand = closeAssemblyApiCommand;
-            ShellViewModel.AssemblyApiDataModels = assemblyApiDataModels;
+            ShellViewModel.AssemblyApis = assemblyApis;
             ShellViewModel.Show();
             var assembly = typeof(ExportAttribute).Assembly;
-            AddAndSelectAssemblyApi(new AssemblyApiDataModel(assembly.GetName().Name, await Task.Run(() => AssemblyReader.Read(assembly.Location))));
+            AddAndSelectAssemblyApi(assembly.GetName().Name, await Task.Run(() => AssemblyReader.Read(assembly.Location)));
         }
 
         public void Shutdown()
@@ -61,7 +62,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
 
             try
             {
-                AddAndSelectAssemblyApi(new AssemblyApiDataModel(Path.GetFileNameWithoutExtension(result.FileName), await Task.Run(() => AssemblyReader.Read(result.FileName))));
+                AddAndSelectAssemblyApi(Path.GetFileNameWithoutExtension(result.FileName), await Task.Run(() => AssemblyReader.Read(result.FileName)));
             }
             catch (Exception e)
             {
@@ -71,13 +72,16 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
 
         private void CloseAssemblyApi()
         {
-            assemblyApiDataModels.Remove(ShellViewModel.SelectedAssemblyApiDataModel);
+            assemblyApis.Remove(ShellViewModel.SelectedAssemblyApi);
         }
 
-        private void AddAndSelectAssemblyApi(AssemblyApiDataModel dataModel)
+        private void AddAndSelectAssemblyApi(string header, string code)
         {
-            assemblyApiDataModels.Add(dataModel);
-            ShellViewModel.SelectedAssemblyApiDataModel = dataModel;
+            var viewModel = codeEditorViewModel.CreateExport().Value;
+            viewModel.Header = header;
+            viewModel.Code = code;
+            assemblyApis.Add(viewModel);
+            ShellViewModel.SelectedAssemblyApi = viewModel;
         }
     }
 }

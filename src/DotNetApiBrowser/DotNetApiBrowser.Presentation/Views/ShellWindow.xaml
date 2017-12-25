@@ -4,8 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:Waf.DotNetApiBrowser.Applications.ViewModels;assembly=Waf.DotNetApiBrowser.Applications"
-        xmlns:dm="clr-namespace:Waf.DotNetApiBrowser.Applications.DataModels;assembly=Waf.DotNetApiBrowser.Applications"
-        xmlns:ctrl="clr-namespace:Waf.DotNetApiBrowser.Presentation.Controls"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:ShellViewModel}"
         Title="{Binding Title, Mode=OneTime}" Width="800" Height="600">
     
@@ -17,15 +15,15 @@
             </MenuItem>
         </Menu>
 
-        <TabControl Grid.Row="1" ItemsSource="{Binding AssemblyApiDataModels}" SelectedItem="{Binding SelectedAssemblyApiDataModel}" Margin="0,2,0,0" Padding="0" BorderThickness="0,1,0,0">
+        <TabControl Grid.Row="1" ItemsSource="{Binding AssemblyApis}" SelectedItem="{Binding SelectedAssemblyApi}" Margin="0,2,0,0" Padding="0" BorderThickness="0,1,0,0">
             <TabControl.ItemContainerStyle>
                 <Style TargetType="TabItem">
                     <Setter Property="HeaderTemplate">
                         <Setter.Value>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding AssemblyName, Mode=OneTime}" Margin="3,0,7,0" TextTrimming="CharacterEllipsis" MaxWidth="200"
-                                               ToolTip="{Binding AssemblyName, Mode=OneTime}"/>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Header, Mode=OneTime}" Margin="3,0,7,0" TextTrimming="CharacterEllipsis" MaxWidth="200"
+                                               ToolTip="{Binding Header, Mode=OneTime}"/>
                                     <Button Command="{Binding DataContext.CloseAssemblyApiCommand, ElementName=rootContainer}"
                                                 Visibility="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabItem}}, Converter={StaticResource BoolToVisibilityConverter}}"
                                                 Width="16" Height="16" Margin="0,1,0,0" Background="Transparent" BorderBrush="Transparent">
@@ -39,15 +37,7 @@
             </TabControl.ItemContainerStyle>
             <TabControl.ContentTemplate>
                 <DataTemplate>
-                    <ctrl:CodeEditor Code="{Binding Api, Mode=OneTime}" IsReadOnly="True" Padding="7" d:DataContext="{d:DesignInstance dm:AssemblyApiDataModel}">
-                        <ctrl:CodeEditor.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Find" Command="Find"/>
-                                <Separator/>
-                                <MenuItem Header="Copy" Command="Copy"/>
-                            </ContextMenu>
-                        </ctrl:CodeEditor.ContextMenu>
-                    </ctrl:CodeEditor>
+                    <ContentPresenter Content="{Binding View, Mode=OneTime}"/>
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>
