@@ -46,7 +46,10 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             ShellViewModel.AssemblyApis = assemblyApis;
             ShellViewModel.Show();
             var assembly = typeof(ExportAttribute).Assembly;
-            AddAndSelectAssemblyApi(assembly.GetName().Name, await Task.Run(() => AssemblyReader.Read(assembly.Location)));
+            using (ShellViewModel.SetApplicationBusy())
+            {
+                AddAndSelectAssemblyApi(assembly.GetName().Name, await Task.Run(() => AssemblyReader.Read(assembly.Location)));
+            }
         }
 
         public void Shutdown()
@@ -62,7 +65,10 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
 
             try
             {
-                AddAndSelectAssemblyApi(Path.GetFileNameWithoutExtension(result.FileName), await Task.Run(() => AssemblyReader.Read(result.FileName)));
+                using (ShellViewModel.SetApplicationBusy())
+                {
+                    AddAndSelectAssemblyApi(Path.GetFileNameWithoutExtension(result.FileName), await Task.Run(() => AssemblyReader.Read(result.FileName)));
+                }
             }
             catch (Exception e)
             {
