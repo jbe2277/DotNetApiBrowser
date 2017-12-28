@@ -7,21 +7,41 @@
              xmlns:nuget="clr-namespace:NuGet.Protocol.Core.Types;assembly=NuGet.Protocol.Core.Types"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:SelectPackageViewModel}"
              d:DesignHeight="400" d:DesignWidth="550">
-    <StackPanel>
-        <TextBlock Text="Search:"/>
-        <TextBox x:Name="searchTextBox" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Delay=2000}" KeyUp="SearchTextBoxKeyUp"/>
-        <CheckBox IsChecked="{Binding IncludePrerelease}" Content="Include prerelease"/>
-        <ListView ItemsSource="{Binding NugetPackages}" SelectedItem="{Binding SelectedNugetPackage}" Height="200">
+    <Grid Margin="11,11,11,22">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="{StaticResource Layout.ColumnSpace}"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="{StaticResource Layout.ColumnSpace}"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="{StaticResource Layout.RowSpace}"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="{StaticResource Layout.RowSpace}"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Column="0" Grid.Row="0" Text="Search for a package:"/>
+        <TextBox Grid.Column="2" Grid.Row="0" x:Name="searchTextBox" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Delay=2000}" KeyUp="SearchTextBoxKeyUp"/>
+        <CheckBox Grid.Column="4" Grid.Row="0" IsChecked="{Binding IncludePrerelease}" Content="Include prerelease"/>
+        
+        <ListView Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="5" ItemsSource="{Binding NugetPackages}" SelectedItem="{Binding SelectedNugetPackage}"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel d:DataContext="{d:DesignInstance nuget:IPackageSearchMetadata}">
-                        <TextBlock Text="{Binding Title}"/>
-                        <TextBlock Text="{Binding Authors}"/>
-                        <TextBlock Text="{Binding Description}"/>
+                        <TextBlock Margin="0,4,0,0">
+                            <Run Text="{Binding Title, Mode=OneTime}" FontWeight="Bold"/> by <Run Text="{Binding Authors, Mode=OneTime}"/>, <Run Text="{Binding DownloadCount, Mode=OneTime, Converter={StaticResource DownloadCountConverter}}" FontWeight="SemiBold"/> downloads
+                        </TextBlock>
+                        <TextBlock Text="{Binding Description, Mode=OneTime}" Height="16" Margin="0,4"/>
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <ComboBox ItemsSource="{Binding PackageVersions}" SelectedItem="{Binding SelectedPackageVersion}" DisplayMemberPath="Version"/>
-    </StackPanel>
+
+        <TextBlock Grid.Column="0" Grid.Row="4" Text="Version:"/>
+        <ComboBox Grid.Column="2" Grid.Row="4" ItemsSource="{Binding PackageVersions}" SelectedItem="{Binding SelectedPackageVersion}" DisplayMemberPath="Version"/>
+    </Grid>
 </UserControl>

@@ -62,6 +62,7 @@
     <Compile Include="Controls\CodeHighlightColors.cs" />
     <Compile Include="Controls\CodeHighlighter.cs" />
     <Compile Include="Controls\CodeHighlightingColorizer.cs" />
+    <Compile Include="Converters\DownloadCountConverter.cs" />
     <Compile Include="Views\CodeEditorView.xaml.cs">
       <DependentUpon>CodeEditorView.xaml</DependentUpon>
     </Compile>
@@ -130,6 +131,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Resources\LayoutResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\CodeEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -151,5 +156,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

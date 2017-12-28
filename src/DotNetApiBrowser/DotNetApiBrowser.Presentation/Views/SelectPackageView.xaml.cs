@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.Composition;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -12,6 +13,12 @@ namespace Waf.DotNetApiBrowser.Presentation.Views
         public SelectPackageView()
         {
             InitializeComponent();
+            Loaded += LoadedHandler;
+        }
+
+        private void LoadedHandler(object sender, RoutedEventArgs e)
+        {
+            searchTextBox.Focus();
         }
 
         private void SearchTextBoxKeyUp(object sender, KeyEventArgs e)

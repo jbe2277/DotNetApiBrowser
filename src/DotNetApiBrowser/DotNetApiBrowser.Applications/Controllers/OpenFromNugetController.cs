@@ -156,7 +156,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         {
             if (string.IsNullOrEmpty(searchText)) return Array.Empty<IPackageSearchMetadata>();
             var resource = await searchResource.Value.ConfigureAwait(false);
-            return (await resource.SearchAsync(searchText, new SearchFilter(includePrerelease), 0, 10, new Logger(), CancellationToken.None).ConfigureAwait(false)).ToArray();
+            return (await resource.SearchAsync(searchText, new SearchFilter(includePrerelease), 0, 50, new Logger(), CancellationToken.None).ConfigureAwait(false)).ToArray();
         }
 
         private async Task<IReadOnlyList<VersionInfo>> GetVersionInfos(IPackageSearchMetadata packageSearchMetadata)
