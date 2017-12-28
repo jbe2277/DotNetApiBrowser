@@ -1,5 +1,5 @@
-﻿using System;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
+using System.Threading.Tasks;
 using System.Waf.Applications;
 using System.Windows.Input;
 using Waf.DotNetApiBrowser.Applications.Views;
@@ -26,9 +26,9 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
             set { SetProperty(ref contentView, value); }
         }
 
-        public void ShowDialog(object ownerWindow)
+        public Task ShowDialogAsync(object ownerWindow)
         {
-            ViewCore.ShowDialog(ownerWindow);
+            return ViewCore.ShowDialogAsync(ownerWindow);
         }
 
         public void Close()

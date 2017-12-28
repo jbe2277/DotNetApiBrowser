@@ -83,11 +83,15 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             }
         }
 
-        private void OpenFromNuget()
+        private async void OpenFromNuget()
         {
             using (var controller = openFromNugetController.CreateExport())
             {
-                controller.Value.Run(ShellViewModel.View);
+                var result = await controller.Value.RunAsync(ShellViewModel.View);
+                using (ShellViewModel.SetApplicationBusy())
+                {
+                    AddAndSelectAssemblyApi(Path.GetFileNameWithoutExtension(result.fileName), await Task.Run(() => AssemblyReader.Read(result.assemblyStream, null)));
+                }
             }
         }
 

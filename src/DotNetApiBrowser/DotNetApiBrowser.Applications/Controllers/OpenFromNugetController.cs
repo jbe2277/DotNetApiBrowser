@@ -7,7 +7,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Waf.Applications;
@@ -21,8 +24,10 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         private readonly OpenFromNugetViewModel openFromNugetViewModel;
         private readonly SelectPackageViewModel selectPackageViewModel;
         private readonly SelectAssemblyViewModel selectAssemblyViewModel;
+        private readonly Lazy<Task<PackageSearchResource>> searchResource;
         private readonly DelegateCommand backCommand;
         private readonly DelegateCommand nextCommand;
+        private (string fileName, Stream assemblyStream) result;
 
         [ImportingConstructor]
         public OpenFromNugetController(OpenFromNugetViewModel openFromNugetViewModel, SelectPackageViewModel selectPackageViewModel, SelectAssemblyViewModel selectAssemblyViewModel)
@@ -31,16 +36,27 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             this.selectPackageViewModel = selectPackageViewModel;
             this.selectAssemblyViewModel = selectAssemblyViewModel;
             selectPackageViewModel.PropertyChanged += SelectPackageViewModelPropertyChanged;
+            searchResource = new Lazy<Task<PackageSearchResource>>(() => 
+                new SourceRepository(new PackageSource("https://api.nuget.org/v3/index.json"), Repository.Provider.GetCoreV3()).GetResourceAsync<PackageSearchResource>());
             backCommand = new DelegateCommand(Back, CanBack);
             nextCommand = new DelegateCommand(Next, CanNext);
         }
 
-        public void Run(object ownerWindow)
+        public async Task<(string fileName, Stream assemblyStream)> RunAsync(object ownerWindow)
         {
-            openFromNugetViewModel.BackCommand = backCommand;
-            openFromNugetViewModel.NextCommand = nextCommand;
-            openFromNugetViewModel.ContentView = selectPackageViewModel.View;
-            openFromNugetViewModel.ShowDialog(ownerWindow);
+            try
+            {
+                openFromNugetViewModel.BackCommand = backCommand;
+                openFromNugetViewModel.NextCommand = nextCommand;
+                openFromNugetViewModel.ContentView = selectPackageViewModel.View;
+                await openFromNugetViewModel.ShowDialogAsync(ownerWindow);   
+                return result;
+            }
+            finally
+            {
+                selectAssemblyViewModel.Assemblies?.FirstOrDefault()?.Archive.Dispose();
+                if (searchResource.IsValueCreated) searchResource.Value.Dispose();
+            }            
         }
 
         private bool CanBack()
@@ -54,9 +70,27 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
 
         private bool CanNext() { return true; }
 
-        private void Next()
+        private async void Next()
         {
-            openFromNugetViewModel.Close();
+            if (openFromNugetViewModel.ContentView == selectPackageViewModel.View)
+            {
+                selectAssemblyViewModel.Assemblies?.FirstOrDefault()?.Archive.Dispose();
+                selectAssemblyViewModel.Assemblies = Array.Empty<ZipArchiveEntry>();
+                selectAssemblyViewModel.SelectedAssembly = null;
+                openFromNugetViewModel.ContentView = selectAssemblyViewModel.View;
+                var nugetPackage = await DownloadNugetPackage(selectPackageViewModel.SelectedNugetPackage.Identity.Id, selectPackageViewModel.SelectedPackageVersion.Version.ToString());
+                selectAssemblyViewModel.Assemblies = nugetPackage.Entries.Where(x => new[] { ".dll", ".exe" }.Contains(Path.GetExtension(x.Name))).ToArray();
+                selectAssemblyViewModel.SelectedAssembly = selectAssemblyViewModel.Assemblies.FirstOrDefault();
+            }
+            else if (openFromNugetViewModel.ContentView == selectAssemblyViewModel.View)
+            {
+                result = (selectAssemblyViewModel.SelectedAssembly.Name, new MemoryStream());
+                await selectAssemblyViewModel.SelectedAssembly.Open().CopyToAsync(result.assemblyStream);
+                result.assemblyStream.Position = 0;
+                openFromNugetViewModel.Close();
+            }
+
+            // TODO: Dispose
         }
 
         private async void SelectPackageViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -80,17 +114,25 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         private async Task<IReadOnlyList<IPackageSearchMetadata>> GetNugetPackages(string searchText, bool includePrerelease)
         {
             if (string.IsNullOrEmpty(searchText)) return Array.Empty<IPackageSearchMetadata>();
-            var packageSource = new PackageSource("https://api.nuget.org/v3/index.json");
-            var sourceRepository = new SourceRepository(packageSource, Repository.Provider.GetCoreV3());
-
-            var searchResource = await sourceRepository.GetResourceAsync<PackageSearchResource>().ConfigureAwait(false);
-            return (await searchResource.SearchAsync(searchText, new SearchFilter(includePrerelease), 0, 10, new Logger(), CancellationToken.None).ConfigureAwait(false)).ToArray();
+            var resource = await searchResource.Value.ConfigureAwait(false);
+            return (await resource.SearchAsync(searchText, new SearchFilter(includePrerelease), 0, 10, new Logger(), CancellationToken.None).ConfigureAwait(false)).ToArray();
         }
 
         private async Task<IReadOnlyList<VersionInfo>> GetVersionInfos(IPackageSearchMetadata packageSearchMetadata)
         {
             if (packageSearchMetadata == null) return Array.Empty<VersionInfo>();
             return (await packageSearchMetadata.GetVersionsAsync().ConfigureAwait(false)).Reverse().ToArray();
+        }
+
+        private async Task<ZipArchive> DownloadNugetPackage(string packageId, string version)
+        {
+            using (var client = new HttpClient())
+            {
+                var response = await client.GetAsync($"https://www.nuget.org/api/v2/package/{packageId}/{version}").ConfigureAwait(false);
+                response.EnsureSuccessStatusCode(); // TODO: Error handling
+                var packageStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                return new ZipArchive(packageStream, ZipArchiveMode.Read, leaveOpen: false);
+            }
         }
 
 
