@@ -28,6 +28,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         private readonly DelegateCommand backCommand;
         private readonly DelegateCommand nextCommand;
         private (string fileName, Stream assemblyStream) result;
+        private bool updateSelectAssemblyView;
 
         [ImportingConstructor]
         public OpenFromNugetController(OpenFromNugetViewModel openFromNugetViewModel, SelectPackageViewModel selectPackageViewModel, SelectAssemblyViewModel selectAssemblyViewModel)
@@ -35,7 +36,9 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             this.openFromNugetViewModel = openFromNugetViewModel;
             this.selectPackageViewModel = selectPackageViewModel;
             this.selectAssemblyViewModel = selectAssemblyViewModel;
+            openFromNugetViewModel.PropertyChanged += OpenFromNugetViewModelPropertyChanged;
             selectPackageViewModel.PropertyChanged += SelectPackageViewModelPropertyChanged;
+            selectAssemblyViewModel.PropertyChanged += SelectAssemblyViewModelPropertyChanged;
             searchResource = new Lazy<Task<PackageSearchResource>>(() => 
                 new SourceRepository(new PackageSource("https://api.nuget.org/v3/index.json"), Repository.Provider.GetCoreV3()).GetResourceAsync<PackageSearchResource>());
             backCommand = new DelegateCommand(Back, CanBack);
@@ -48,7 +51,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             {
                 openFromNugetViewModel.BackCommand = backCommand;
                 openFromNugetViewModel.NextCommand = nextCommand;
-                openFromNugetViewModel.ContentView = selectPackageViewModel.View;
+                ShowSelectPackageView();
                 await openFromNugetViewModel.ShowDialogAsync(ownerWindow);   
                 return result;
             }
@@ -59,38 +62,63 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             }            
         }
 
-        private bool CanBack()
-        {
-            return true;
-        }
+        private bool CanBack() => openFromNugetViewModel.ContentView == selectAssemblyViewModel.View;
 
         private void Back()
         {
+            ShowSelectPackageView();
         }
 
-        private bool CanNext() { return true; }
+        private bool CanNext() => openFromNugetViewModel.ContentView == selectPackageViewModel.View && selectPackageViewModel.SelectedPackageVersion != null
+            || openFromNugetViewModel.ContentView == selectAssemblyViewModel.View && selectAssemblyViewModel.SelectedAssembly != null;
 
-        private async void Next()
+        private void Next()
         {
             if (openFromNugetViewModel.ContentView == selectPackageViewModel.View)
+            {
+                ShowSelectAssemblyView();
+            }
+            else if (openFromNugetViewModel.ContentView == selectAssemblyViewModel.View)
+            {
+                Finish();
+            }
+        }
+
+        private void ShowSelectPackageView()
+        {
+            openFromNugetViewModel.ContentView = selectPackageViewModel.View;
+        }
+
+        private async void ShowSelectAssemblyView()
+        {
+            openFromNugetViewModel.ContentView = selectAssemblyViewModel.View;
+            if (updateSelectAssemblyView)
             {
                 selectAssemblyViewModel.Assemblies?.FirstOrDefault()?.Archive.Dispose();
                 selectAssemblyViewModel.Assemblies = Array.Empty<ZipArchiveEntry>();
                 selectAssemblyViewModel.SelectedAssembly = null;
-                openFromNugetViewModel.ContentView = selectAssemblyViewModel.View;
                 var nugetPackage = await DownloadNugetPackage(selectPackageViewModel.SelectedNugetPackage.Identity.Id, selectPackageViewModel.SelectedPackageVersion.Version.ToString());
                 selectAssemblyViewModel.Assemblies = nugetPackage.Entries.Where(x => new[] { ".dll", ".exe" }.Contains(Path.GetExtension(x.Name))).ToArray();
                 selectAssemblyViewModel.SelectedAssembly = selectAssemblyViewModel.Assemblies.FirstOrDefault();
+                updateSelectAssemblyView = false;
             }
-            else if (openFromNugetViewModel.ContentView == selectAssemblyViewModel.View)
-            {
-                result = (selectAssemblyViewModel.SelectedAssembly.Name, new MemoryStream());
-                await selectAssemblyViewModel.SelectedAssembly.Open().CopyToAsync(result.assemblyStream);
-                result.assemblyStream.Position = 0;
-                openFromNugetViewModel.Close();
-            }
+        }
 
-            // TODO: Dispose
+        private async void Finish()
+        {
+            result = (selectAssemblyViewModel.SelectedAssembly.Name, new MemoryStream());
+            await selectAssemblyViewModel.SelectedAssembly.Open().CopyToAsync(result.assemblyStream);
+            result.assemblyStream.Position = 0;
+            openFromNugetViewModel.Close();
+        }
+
+        private void OpenFromNugetViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(openFromNugetViewModel.ContentView))
+            {
+                backCommand.RaiseCanExecuteChanged();
+                nextCommand.RaiseCanExecuteChanged();
+            }
         }
 
         private async void SelectPackageViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -108,6 +136,19 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
                 selectPackageViewModel.PackageVersions = await GetVersionInfos(selectPackageViewModel.SelectedNugetPackage);
                 selectPackageViewModel.SelectedPackageVersion = selectPackageViewModel.PackageVersions.FirstOrDefault();
                 // TODO: error handling
+            }
+            else if (e.PropertyName == nameof(selectPackageViewModel.SelectedPackageVersion))
+            {
+                updateSelectAssemblyView = true;
+                nextCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        private void SelectAssemblyViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(selectAssemblyViewModel.SelectedAssembly))
+            {
+                nextCommand.RaiseCanExecuteChanged();
             }
         }
 

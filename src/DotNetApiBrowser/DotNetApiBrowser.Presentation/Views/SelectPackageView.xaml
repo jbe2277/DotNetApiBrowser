@@ -9,7 +9,7 @@
              d:DesignHeight="400" d:DesignWidth="550">
     <StackPanel>
         <TextBlock Text="Search:"/>
-        <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Delay=2000}"/>
+        <TextBox x:Name="searchTextBox" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Delay=2000}" KeyUp="SearchTextBoxKeyUp"/>
         <CheckBox IsChecked="{Binding IncludePrerelease}" Content="Include prerelease"/>
         <ListView ItemsSource="{Binding NugetPackages}" SelectedItem="{Binding SelectedNugetPackage}" Height="200">
             <ListView.ItemTemplate>

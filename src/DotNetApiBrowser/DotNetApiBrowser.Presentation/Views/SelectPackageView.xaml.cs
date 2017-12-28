@@ -1,4 +1,7 @@
 ﻿using System.ComponentModel.Composition;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
 using Waf.DotNetApiBrowser.Applications.Views;
 
 namespace Waf.DotNetApiBrowser.Presentation.Views
@@ -9,6 +12,15 @@ namespace Waf.DotNetApiBrowser.Presentation.Views
         public SelectPackageView()
         {
             InitializeComponent();
+        }
+
+        private void SearchTextBoxKeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                var binding = BindingOperations.GetBindingExpression(searchTextBox, TextBox.TextProperty);
+                binding.UpdateSource();
+            }
         }
     }
 }

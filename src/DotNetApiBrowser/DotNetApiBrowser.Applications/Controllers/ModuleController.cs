@@ -88,6 +88,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             using (var controller = openFromNugetController.CreateExport())
             {
                 var result = await controller.Value.RunAsync(ShellViewModel.View);
+                if (result.assemblyStream == null) return;
                 using (ShellViewModel.SetApplicationBusy())
                 {
                     AddAndSelectAssemblyApi(Path.GetFileNameWithoutExtension(result.fileName), await Task.Run(() => AssemblyReader.Read(result.assemblyStream, null)));
