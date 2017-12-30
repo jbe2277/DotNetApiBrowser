@@ -9,4 +9,6 @@
 
     <c:DownloadCountConverter x:Key="DownloadCountConverter"/>
 
+    <c:NugetAssemblyPathConverter x:Key="NugetAssemblyPathConverter"/>
+
 </ResourceDictionary>

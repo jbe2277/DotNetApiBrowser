@@ -63,6 +63,7 @@
     <Compile Include="Controls\CodeHighlighter.cs" />
     <Compile Include="Controls\CodeHighlightingColorizer.cs" />
     <Compile Include="Converters\DownloadCountConverter.cs" />
+    <Compile Include="Converters\NugetAssemblyPathConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Views\CodeEditorView.xaml.cs">
       <DependentUpon>CodeEditorView.xaml</DependentUpon>
