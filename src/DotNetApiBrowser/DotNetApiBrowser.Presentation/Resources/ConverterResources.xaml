@@ -4,6 +4,8 @@
                     xmlns:c="clr-namespace:Waf.DotNetApiBrowser.Presentation.Converters">
 
     <waf:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    
+    <c:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
 
     <c:DownloadCountConverter x:Key="DownloadCountConverter"/>
 

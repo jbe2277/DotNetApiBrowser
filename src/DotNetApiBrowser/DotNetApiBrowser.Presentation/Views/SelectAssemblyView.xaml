@@ -6,8 +6,16 @@
              xmlns:vm="clr-namespace:Waf.DotNetApiBrowser.Applications.ViewModels;assembly=Waf.DotNetApiBrowser.Applications"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:SelectAssemblyViewModel}"
              d:DesignHeight="300" d:DesignWidth="300">
-    <StackPanel>
-        <ListView ItemsSource="{Binding Assemblies}" SelectedItem="{Binding SelectedAssembly}" DisplayMemberPath="FullName" Height="150">
-        </ListView>
-    </StackPanel>
+    <Grid Margin="11,11,11,22">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="{StaticResource Layout.RowSpace}"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Select an assembly:"/>
+        <ListView Grid.Row="2" ItemsSource="{Binding Assemblies}" SelectedItem="{Binding SelectedAssembly}" DisplayMemberPath="FullName"/>
+
+        <ProgressBar Grid.Row="2" IsIndeterminate="true" VerticalAlignment="Top" Visibility="{Binding Assemblies, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}"/>
+    </Grid>
 </UserControl>

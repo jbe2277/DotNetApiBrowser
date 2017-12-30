@@ -95,7 +95,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             if (updateSelectAssemblyView)
             {
                 selectAssemblyViewModel.Assemblies?.FirstOrDefault()?.Archive.Dispose();
-                selectAssemblyViewModel.Assemblies = Array.Empty<ZipArchiveEntry>();
+                selectAssemblyViewModel.Assemblies = null;
                 selectAssemblyViewModel.SelectedAssembly = null;
                 var nugetPackage = await DownloadNugetPackage(selectPackageViewModel.SelectedNugetPackage.Identity.Id, selectPackageViewModel.SelectedPackageVersion.Version.ToString());
                 selectAssemblyViewModel.Assemblies = nugetPackage.Entries.Where(x => new[] { ".dll", ".exe" }.Contains(Path.GetExtension(x.Name))).ToArray();
