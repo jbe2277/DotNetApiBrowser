@@ -43,11 +43,6 @@ namespace Waf.DotNetApiBrowser.Presentation.Controls
 
         public static HighlightingColor DefaultHighlightingColor => defaultHighlightingColor;
 
-        public static Color GetColor(string classificationTypeName)
-        {
-            return GetHighlightingColorCore(classificationTypeName).Color;
-        }
-
         public static HighlightingColor GetHighlightingColor(string classificationTypeName)
         {
             return GetHighlightingColorCore(classificationTypeName);
@@ -63,12 +58,9 @@ namespace Waf.DotNetApiBrowser.Presentation.Controls
         {
             public CachedHighlightingColor(Color color)
             {
-                Color = color;
                 Foreground = new SimpleHighlightingBrush(color);
                 Freeze();
             }
-
-            public Color Color { get; }
         }
     }
 }

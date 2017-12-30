@@ -44,19 +44,13 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         {
         }
 
-        public async void Run()
+        public void Run()
         {
             ShellViewModel.OpenFileCommand = openFileCommand;
             ShellViewModel.OpenFromNugetCommand = openFromNugetCommand;
             ShellViewModel.CloseAssemblyApiCommand = closeAssemblyApiCommand;
             ShellViewModel.AssemblyApis = assemblyApis;
             ShellViewModel.Show();
-            // TODO: Remove this
-            //var assembly = typeof(ExportAttribute).Assembly;
-            //using (ShellViewModel.SetApplicationBusy())
-            //{
-            //    AddAndSelectAssemblyApi(assembly.GetName().Name, await Task.Run(() => AssemblyReader.Read(assembly.Location)));
-            //}
         }
 
         public void Shutdown()
