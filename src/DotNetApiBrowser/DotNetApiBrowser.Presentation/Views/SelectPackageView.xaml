@@ -40,8 +40,10 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <ProgressBar Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="5" IsIndeterminate="true" Visibility="{Binding NugetPackages, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}"/>
 
         <TextBlock Grid.Column="0" Grid.Row="4" Text="Version:"/>
         <ComboBox Grid.Column="2" Grid.Row="4" ItemsSource="{Binding PackageVersions}" SelectedItem="{Binding SelectedPackageVersion}" DisplayMemberPath="Version"/>
+        <ProgressBar Grid.Column="2" Grid.Row="4" IsIndeterminate="true" Visibility="{Binding PackageVersions, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}"/>
     </Grid>
 </UserControl>

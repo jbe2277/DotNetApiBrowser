@@ -14,8 +14,8 @@
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Text="Select an assembly:"/>
+        
         <ListView Grid.Row="2" ItemsSource="{Binding Assemblies}" SelectedItem="{Binding SelectedAssembly}" DisplayMemberPath="FullName"/>
-
-        <ProgressBar Grid.Row="2" IsIndeterminate="true" VerticalAlignment="Top" Visibility="{Binding Assemblies, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}"/>
+        <ProgressBar Grid.Row="2" IsIndeterminate="true" Visibility="{Binding Assemblies, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}"/>
     </Grid>
 </UserControl>

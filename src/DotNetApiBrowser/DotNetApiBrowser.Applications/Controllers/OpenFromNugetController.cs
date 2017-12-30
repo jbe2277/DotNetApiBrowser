@@ -36,6 +36,8 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             this.openFromNugetViewModel = openFromNugetViewModel;
             this.selectPackageViewModel = selectPackageViewModel;
             this.selectAssemblyViewModel = selectAssemblyViewModel;
+            selectPackageViewModel.NugetPackages = Array.Empty<IPackageSearchMetadata>();
+            selectPackageViewModel.PackageVersions = Array.Empty<VersionInfo>();
             openFromNugetViewModel.PropertyChanged += OpenFromNugetViewModelPropertyChanged;
             selectPackageViewModel.PropertyChanged += SelectPackageViewModelPropertyChanged;
             selectAssemblyViewModel.PropertyChanged += SelectAssemblyViewModelPropertyChanged;
@@ -125,13 +127,15 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         {
             if (new[] { nameof(selectPackageViewModel.SearchText), nameof(selectPackageViewModel.IncludePrerelease) }.Contains(e.PropertyName))
             {
+                selectPackageViewModel.NugetPackages = null;
+                selectPackageViewModel.SelectedNugetPackage = null;
                 selectPackageViewModel.NugetPackages = await GetNugetPackages(selectPackageViewModel.SearchText, selectPackageViewModel.IncludePrerelease);
                 selectPackageViewModel.SelectedNugetPackage = selectPackageViewModel.NugetPackages.FirstOrDefault();
                 // TODO: error handling
             }
             else if (e.PropertyName == nameof(selectPackageViewModel.SelectedNugetPackage))
             {
-                selectPackageViewModel.PackageVersions = Array.Empty<VersionInfo>();
+                selectPackageViewModel.PackageVersions = null;
                 selectPackageViewModel.SelectedPackageVersion = null;
                 selectPackageViewModel.PackageVersions = await GetVersionInfos(selectPackageViewModel.SelectedNugetPackage);
                 selectPackageViewModel.SelectedPackageVersion = selectPackageViewModel.PackageVersions.FirstOrDefault();

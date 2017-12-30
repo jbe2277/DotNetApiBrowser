@@ -16,7 +16,10 @@
     </Style>
 
     <Style TargetType="ProgressBar">
+        <Setter Property="Margin" Value="1"/>
         <Setter Property="Height" Value="3"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="VerticalAlignment" Value="Top"/>
     </Style>
     
     <Style x:Key="DialogButton" TargetType="Button">
