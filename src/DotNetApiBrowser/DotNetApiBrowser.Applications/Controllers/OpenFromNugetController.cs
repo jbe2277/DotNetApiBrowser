@@ -14,6 +14,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Waf.Applications;
+using System.Waf.Applications.Services;
 using Waf.DotNetApiBrowser.Applications.ViewModels;
 
 namespace Waf.DotNetApiBrowser.Applications.Controllers
@@ -21,6 +22,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
     [Export, PartCreationPolicy(CreationPolicy.NonShared)]
     internal class OpenFromNugetController
     {
+        private readonly IMessageService messageService;
         private readonly OpenFromNugetViewModel openFromNugetViewModel;
         private readonly SelectPackageViewModel selectPackageViewModel;
         private readonly SelectAssemblyViewModel selectAssemblyViewModel;
@@ -31,8 +33,9 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         private bool updateSelectAssemblyView;
 
         [ImportingConstructor]
-        public OpenFromNugetController(OpenFromNugetViewModel openFromNugetViewModel, SelectPackageViewModel selectPackageViewModel, SelectAssemblyViewModel selectAssemblyViewModel)
+        public OpenFromNugetController(IMessageService messageService, OpenFromNugetViewModel openFromNugetViewModel, SelectPackageViewModel selectPackageViewModel, SelectAssemblyViewModel selectAssemblyViewModel)
         {
+            this.messageService = messageService;
             this.openFromNugetViewModel = openFromNugetViewModel;
             this.selectPackageViewModel = selectPackageViewModel;
             this.selectAssemblyViewModel = selectAssemblyViewModel;
@@ -54,7 +57,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
                 openFromNugetViewModel.BackCommand = backCommand;
                 openFromNugetViewModel.NextCommand = nextCommand;
                 ShowSelectPackageView();
-                await openFromNugetViewModel.ShowDialogAsync(ownerWindow);   
+                await openFromNugetViewModel.ShowDialogAsync(ownerWindow);
                 return result;
             }
             finally
@@ -99,8 +102,16 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
                 selectAssemblyViewModel.Assemblies?.FirstOrDefault()?.Archive.Dispose();
                 selectAssemblyViewModel.Assemblies = null;
                 selectAssemblyViewModel.SelectedAssembly = null;
-                var nugetPackage = await DownloadNugetPackage(selectPackageViewModel.SelectedNugetPackage.Identity.Id, selectPackageViewModel.SelectedPackageVersion.Version.ToString());
-                selectAssemblyViewModel.Assemblies = nugetPackage.Entries.Where(x => new[] { ".dll", ".exe" }.Contains(Path.GetExtension(x.Name))).ToArray();
+                try
+                {
+                    var nugetPackage = await DownloadNugetPackage(selectPackageViewModel.SelectedNugetPackage.Identity.Id, selectPackageViewModel.SelectedPackageVersion.Version.ToString());
+                    selectAssemblyViewModel.Assemblies = nugetPackage.Entries.Where(x => new[] { ".dll", ".exe" }.Contains(Path.GetExtension(x.Name))).ToArray();
+                }
+                catch (Exception ex)
+                {
+                    selectAssemblyViewModel.Assemblies = Array.Empty<ZipArchiveEntry>();
+                    ShowError("Error: " + ex.Message);
+                }
                 selectAssemblyViewModel.SelectedAssembly = selectAssemblyViewModel.Assemblies.FirstOrDefault();
                 updateSelectAssemblyView = false;
             }
@@ -109,9 +120,22 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         private async void Finish()
         {
             result = (selectAssemblyViewModel.SelectedAssembly.Name, new MemoryStream());
-            await selectAssemblyViewModel.SelectedAssembly.Open().CopyToAsync(result.assemblyStream);
-            result.assemblyStream.Position = 0;
+            try
+            {
+                await selectAssemblyViewModel.SelectedAssembly.Open().CopyToAsync(result.assemblyStream);
+                result.assemblyStream.Position = 0;
+            }
+            catch (Exception ex)
+            {
+                result = (null, null);
+                ShowError("Error: " + ex.Message);
+            }
             openFromNugetViewModel.Close();
+        }
+
+        private void ShowError(string message)
+        {
+            if (openFromNugetViewModel.IsVisible) messageService.ShowError(openFromNugetViewModel.View, message);
         }
 
         private void OpenFromNugetViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -129,17 +153,31 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             {
                 selectPackageViewModel.NugetPackages = null;
                 selectPackageViewModel.SelectedNugetPackage = null;
-                selectPackageViewModel.NugetPackages = await GetNugetPackages(selectPackageViewModel.SearchText, selectPackageViewModel.IncludePrerelease);
+                try
+                {
+                    selectPackageViewModel.NugetPackages = await GetNugetPackages(selectPackageViewModel.SearchText, selectPackageViewModel.IncludePrerelease);
+                }
+                catch (Exception ex)
+                {
+                    selectPackageViewModel.NugetPackages = Array.Empty<IPackageSearchMetadata>();
+                    ShowError("Error: " + ex.Message);
+                }
                 selectPackageViewModel.SelectedNugetPackage = selectPackageViewModel.NugetPackages.FirstOrDefault();
-                // TODO: error handling
             }
             else if (e.PropertyName == nameof(selectPackageViewModel.SelectedNugetPackage))
             {
                 selectPackageViewModel.PackageVersions = null;
                 selectPackageViewModel.SelectedPackageVersion = null;
-                selectPackageViewModel.PackageVersions = await GetVersionInfos(selectPackageViewModel.SelectedNugetPackage);
+                try
+                {
+                    selectPackageViewModel.PackageVersions = await GetVersionInfos(selectPackageViewModel.SelectedNugetPackage);
+                }
+                catch (Exception ex)
+                {
+                    selectPackageViewModel.PackageVersions = Array.Empty<VersionInfo>();
+                    ShowError("Error: " + ex.Message);
+                }
                 selectPackageViewModel.SelectedPackageVersion = selectPackageViewModel.PackageVersions.FirstOrDefault();
-                // TODO: error handling
             }
             else if (e.PropertyName == nameof(selectPackageViewModel.SelectedPackageVersion))
             {
@@ -174,7 +212,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             using (var client = new HttpClient())
             {
                 var response = await client.GetAsync($"https://www.nuget.org/api/v2/package/{packageId}/{version}").ConfigureAwait(false);
-                response.EnsureSuccessStatusCode(); // TODO: Error handling
+                response.EnsureSuccessStatusCode();
                 var packageStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 return new ZipArchive(packageStream, ZipArchiveMode.Read, leaveOpen: false);
             }

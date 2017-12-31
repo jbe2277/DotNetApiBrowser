@@ -26,9 +26,13 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
             set { SetProperty(ref contentView, value); }
         }
 
-        public Task ShowDialogAsync(object ownerWindow)
+        public bool IsVisible { get; private set; }
+
+        public async Task ShowDialogAsync(object ownerWindow)
         {
-            return ViewCore.ShowDialogAsync(ownerWindow);
+            IsVisible = true;
+            await ViewCore.ShowDialogAsync(ownerWindow);
+            IsVisible = false;
         }
 
         public void Close()
