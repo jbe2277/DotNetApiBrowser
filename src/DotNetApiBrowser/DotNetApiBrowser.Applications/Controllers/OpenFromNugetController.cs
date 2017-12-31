@@ -26,9 +26,9 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         private readonly OpenFromNugetViewModel openFromNugetViewModel;
         private readonly SelectPackageViewModel selectPackageViewModel;
         private readonly SelectAssemblyViewModel selectAssemblyViewModel;
-        private readonly Lazy<Task<PackageSearchResource>> searchResource;
         private readonly DelegateCommand backCommand;
         private readonly DelegateCommand nextCommand;
+        private PackageSearchResource searchResource;
         private (string fileName, Stream assemblyStream) result;
         private bool updateSelectAssemblyView;
 
@@ -44,8 +44,6 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             openFromNugetViewModel.PropertyChanged += OpenFromNugetViewModelPropertyChanged;
             selectPackageViewModel.PropertyChanged += SelectPackageViewModelPropertyChanged;
             selectAssemblyViewModel.PropertyChanged += SelectAssemblyViewModelPropertyChanged;
-            searchResource = new Lazy<Task<PackageSearchResource>>(() => 
-                new SourceRepository(new PackageSource("https://api.nuget.org/v3/index.json"), Repository.Provider.GetCoreV3()).GetResourceAsync<PackageSearchResource>());
             backCommand = new DelegateCommand(Back, CanBack);
             nextCommand = new DelegateCommand(Next, CanNext);
         }
@@ -63,7 +61,6 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             finally
             {
                 selectAssemblyViewModel.Assemblies?.FirstOrDefault()?.Archive.Dispose();
-                if (searchResource.IsValueCreated) searchResource.Value.Dispose();
             }            
         }
 
@@ -194,10 +191,16 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             }
         }
 
+        private async Task<PackageSearchResource> GetPackageSearchResource()
+        {
+            return searchResource = searchResource ?? await new SourceRepository(new PackageSource("https://api.nuget.org/v3/index.json"), Repository.Provider.GetCoreV3())
+                .GetResourceAsync<PackageSearchResource>();
+        }
+
         private async Task<IReadOnlyList<IPackageSearchMetadata>> GetNugetPackages(string searchText, bool includePrerelease)
         {
             if (string.IsNullOrEmpty(searchText)) return Array.Empty<IPackageSearchMetadata>();
-            var resource = await searchResource.Value.ConfigureAwait(false);
+            var resource = await GetPackageSearchResource().ConfigureAwait(false);
             return (await resource.SearchAsync(searchText, new SearchFilter(includePrerelease), 0, 50, new Logger(), CancellationToken.None).ConfigureAwait(false)).ToArray();
         }
 
