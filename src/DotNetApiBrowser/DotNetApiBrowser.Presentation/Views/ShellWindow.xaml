@@ -6,12 +6,17 @@
         xmlns:vm="clr-namespace:Waf.DotNetApiBrowser.Applications.ViewModels;assembly=Waf.DotNetApiBrowser.Applications"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:ShellViewModel}"
         Title="{Binding Title, Mode=OneTime}" Width="800" Height="600">
+
+    <Window.InputBindings>
+        <KeyBinding Key="O" Modifiers="Ctrl" Command="{Binding OpenFileCommand, Mode=OneTime}"/>
+    </Window.InputBindings>
     
     <DockPanel x:Name="rootContainer">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
-                <MenuItem Header="_Open" Command="{Binding OpenFileCommand, Mode=OneTime}"/>
-                <MenuItem Header="Open from _NuGet" Command="{Binding OpenFromNugetCommand, Mode=OneTime}"/>
+                <MenuItem Header="_Open..." Command="{Binding OpenFileCommand, Mode=OneTime}" InputGestureText="Ctrl+O"/>
+                <MenuItem Header="Open from _NuGet..." Command="{Binding OpenFromNugetCommand, Mode=OneTime}"/>
+                <Separator/>
                 <MenuItem Header="E_xit" Command="{Binding ExitCommand, Mode=OneTime}"/>
             </MenuItem>
         </Menu>
