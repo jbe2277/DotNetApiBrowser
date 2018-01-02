@@ -10,6 +10,7 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
     public class OpenFromNugetViewModel : ViewModel<IOpenFromNugetView>
     {
         private object contentView;
+        private bool isClosing;
 
         [ImportingConstructor]
         public OpenFromNugetViewModel(IOpenFromNugetView view) : base(view)
@@ -27,7 +28,13 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
         }
 
         public bool IsVisible { get; private set; }
-
+        
+        public bool IsClosing
+        {
+            get { return isClosing; }
+            set { SetProperty(ref isClosing, value); }
+        }
+        
         public async Task ShowDialogAsync(object ownerWindow)
         {
             IsVisible = true;

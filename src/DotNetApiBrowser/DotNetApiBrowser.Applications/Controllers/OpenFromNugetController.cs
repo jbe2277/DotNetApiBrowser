@@ -30,6 +30,8 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         private readonly DelegateCommand nextCommand;
         private PackageSearchResource searchResource;
         private (string fileName, Stream assemblyStream) result;
+        private CancellationTokenSource getNugetPackagesCancellation;
+        private CancellationTokenSource downloadNugetPackageCancellation;
         private bool updateSelectAssemblyView;
 
         [ImportingConstructor]
@@ -61,6 +63,10 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             finally
             {
                 selectAssemblyViewModel.Assemblies?.FirstOrDefault()?.Archive.Dispose();
+                getNugetPackagesCancellation?.Cancel();
+                getNugetPackagesCancellation?.Dispose();
+                downloadNugetPackageCancellation?.Cancel();
+                downloadNugetPackageCancellation?.Dispose();
             }            
         }
 
@@ -101,7 +107,10 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
                 selectAssemblyViewModel.SelectedAssembly = null;
                 try
                 {
-                    var nugetPackage = await DownloadNugetPackage(selectPackageViewModel.SelectedNugetPackage.Identity.Id, selectPackageViewModel.SelectedPackageVersion.Version.ToString());
+                    downloadNugetPackageCancellation?.Cancel();
+                    downloadNugetPackageCancellation = new CancellationTokenSource();
+                    var nugetPackage = await DownloadNugetPackage(selectPackageViewModel.SelectedNugetPackage.Identity.Id, selectPackageViewModel.SelectedPackageVersion.Version.ToString(), 
+                        downloadNugetPackageCancellation.Token);
                     selectAssemblyViewModel.Assemblies = nugetPackage.Entries.Where(x => new[] { ".dll", ".exe" }.Contains(Path.GetExtension(x.Name))).ToArray();
                 }
                 catch (Exception ex)
@@ -116,6 +125,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
 
         private async void Finish()
         {
+            openFromNugetViewModel.IsClosing = true;
             result = (selectAssemblyViewModel.SelectedAssembly.Name, new MemoryStream());
             try
             {
@@ -152,7 +162,9 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
                 selectPackageViewModel.SelectedNugetPackage = null;
                 try
                 {
-                    selectPackageViewModel.NugetPackages = await GetNugetPackages(selectPackageViewModel.SearchText, selectPackageViewModel.IncludePrerelease);
+                    getNugetPackagesCancellation?.Cancel();
+                    getNugetPackagesCancellation = new CancellationTokenSource();
+                    selectPackageViewModel.NugetPackages = await GetNugetPackages(selectPackageViewModel.SearchText, selectPackageViewModel.IncludePrerelease, getNugetPackagesCancellation.Token);
                 }
                 catch (Exception ex)
                 {
@@ -197,11 +209,11 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
                 .GetResourceAsync<PackageSearchResource>();
         }
 
-        private async Task<IReadOnlyList<IPackageSearchMetadata>> GetNugetPackages(string searchText, bool includePrerelease)
+        private async Task<IReadOnlyList<IPackageSearchMetadata>> GetNugetPackages(string searchText, bool includePrerelease, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(searchText)) return Array.Empty<IPackageSearchMetadata>();
             var resource = await GetPackageSearchResource().ConfigureAwait(false);
-            return (await resource.SearchAsync(searchText, new SearchFilter(includePrerelease), 0, 50, new Logger(), CancellationToken.None).ConfigureAwait(false)).ToArray();
+            return (await resource.SearchAsync(searchText, new SearchFilter(includePrerelease), 0, 50, new Logger(), cancellationToken).ConfigureAwait(false)).ToArray();
         }
 
         private async Task<IReadOnlyList<VersionInfo>> GetVersionInfos(IPackageSearchMetadata packageSearchMetadata)
@@ -210,11 +222,11 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             return (await packageSearchMetadata.GetVersionsAsync().ConfigureAwait(false)).Reverse().ToArray();
         }
 
-        private async Task<ZipArchive> DownloadNugetPackage(string packageId, string version)
+        private async Task<ZipArchive> DownloadNugetPackage(string packageId, string version, CancellationToken cancellationToken)
         {
             using (var client = new HttpClient())
             {
-                var response = await client.GetAsync($"https://www.nuget.org/api/v2/package/{packageId}/{version}").ConfigureAwait(false);
+                var response = await client.GetAsync($"https://www.nuget.org/api/v2/package/{packageId}/{version}", cancellationToken).ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
                 var packageStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 return new ZipArchive(packageStream, ZipArchiveMode.Read, leaveOpen: false);

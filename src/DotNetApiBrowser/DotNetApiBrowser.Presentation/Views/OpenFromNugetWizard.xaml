@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:Waf.DotNetApiBrowser.Applications.ViewModels;assembly=Waf.DotNetApiBrowser.Applications"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:OpenFromNugetViewModel}"
-        Title="Open from NuGet" Height="400" Width="550">
+        Title="Open from NuGet" Height="400" Width="550" IsEnabled="{Binding IsClosing, Converter={StaticResource InvertBooleanConverter}}">
     <DockPanel>
         <Border DockPanel.Dock="Bottom" Background="{x:Static SystemColors.ControlBrush}">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="11">
@@ -25,6 +25,9 @@
             </StackPanel>
         </Border>
 
-        <ContentControl Content="{Binding ContentView}" Focusable="False"/>
+        <Grid>
+            <ContentControl Content="{Binding ContentView}" Focusable="False"/>
+            <ProgressBar IsIndeterminate="true" Visibility="{Binding IsClosing, Converter={StaticResource BoolToVisibilityConverter}}"/>
+        </Grid>
     </DockPanel>
 </Window>
