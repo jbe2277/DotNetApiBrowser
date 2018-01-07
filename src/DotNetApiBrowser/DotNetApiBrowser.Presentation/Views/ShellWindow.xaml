@@ -17,6 +17,8 @@
                 <MenuItem Header="_Open..." Command="{Binding OpenFileCommand, Mode=OneTime}" InputGestureText="Ctrl+O"/>
                 <MenuItem Header="Open from _NuGet..." Command="{Binding OpenFromNugetCommand, Mode=OneTime}"/>
                 <Separator/>
+                <MenuItem Header="_Compare assemblies..." Command="{Binding CompareAssembliesCommand, Mode=OneTime}"/>
+                <Separator/>
                 <MenuItem Header="E_xit" Command="{Binding ExitCommand, Mode=OneTime}"/>
             </MenuItem>
         </Menu>

@@ -30,6 +30,8 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
 
         public ICommand OpenFromNugetCommand { get; set; }
 
+        public ICommand CompareAssembliesCommand { get; set; }
+
         public ICommand CloseAssemblyApiCommand { get; set; }
 
         public IReadOnlyList<CodeEditorViewModel> AssemblyApis { get; set; }

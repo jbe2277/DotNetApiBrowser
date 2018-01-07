@@ -16,24 +16,28 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         private readonly IMessageService messageService;
         private readonly IFileDialogService fileDialogService;
         private readonly ExportFactory<OpenFromNugetController> openFromNugetController;
+        private readonly ExportFactory<CompareAssembliesController> compareAssembliesController;
         private readonly Lazy<ShellViewModel> shellViewModel;
         private readonly ExportFactory<CodeEditorViewModel> codeEditorViewModel;
         private readonly AsyncDelegateCommand openFileCommand;
-        private readonly DelegateCommand openFromNugetCommand;
+        private readonly AsyncDelegateCommand openFromNugetCommand;
+        private readonly DelegateCommand compareAssembliesCommand;
         private readonly DelegateCommand closeAssemblyApiCommand;
         private readonly ObservableCollection<CodeEditorViewModel> assemblyApis;
 
         [ImportingConstructor]
         public ModuleController(IMessageService messageService, IFileDialogService fileDialogService, ExportFactory<OpenFromNugetController> openFromNugetController,
-            Lazy<ShellViewModel> shellViewModel, ExportFactory<CodeEditorViewModel> codeEditorViewModel)
+            ExportFactory<CompareAssembliesController> compareAssembliesController, Lazy<ShellViewModel> shellViewModel, ExportFactory<CodeEditorViewModel> codeEditorViewModel)
         {
             this.messageService = messageService;
             this.fileDialogService = fileDialogService;
             this.openFromNugetController = openFromNugetController;
+            this.compareAssembliesController = compareAssembliesController;
             this.shellViewModel = shellViewModel;
             this.codeEditorViewModel = codeEditorViewModel;
             openFileCommand = new AsyncDelegateCommand(OpenFile);
-            openFromNugetCommand = new DelegateCommand(OpenFromNuget);
+            openFromNugetCommand = new AsyncDelegateCommand(OpenFromNuget);
+            compareAssembliesCommand = new DelegateCommand(CompareAssemblies);
             closeAssemblyApiCommand = new DelegateCommand(CloseAssemblyApi);
             assemblyApis = new ObservableCollection<CodeEditorViewModel>();
         }
@@ -48,6 +52,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         {
             ShellViewModel.OpenFileCommand = openFileCommand;
             ShellViewModel.OpenFromNugetCommand = openFromNugetCommand;
+            ShellViewModel.CompareAssembliesCommand = compareAssembliesCommand;
             ShellViewModel.CloseAssemblyApiCommand = closeAssemblyApiCommand;
             ShellViewModel.AssemblyApis = assemblyApis;
             ShellViewModel.Show();
@@ -77,7 +82,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             }
         }
 
-        private async void OpenFromNuget()
+        private async Task OpenFromNuget()
         {
             using (var controller = openFromNugetController.CreateExport())
             {
@@ -87,6 +92,14 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
                 {
                     AddAndSelectAssemblyApi(Path.GetFileNameWithoutExtension(result.fileName), await Task.Run(() => AssemblyReader.Read(result.assemblyStream, null)));
                 }
+            }
+        }
+
+        private void CompareAssemblies()
+        {
+            using (var controller = compareAssembliesController.CreateExport())
+            {
+                controller.Value.Run(ShellViewModel.View);
             }
         }
 
