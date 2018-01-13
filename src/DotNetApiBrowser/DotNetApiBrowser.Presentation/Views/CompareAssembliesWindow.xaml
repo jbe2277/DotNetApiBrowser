@@ -14,8 +14,9 @@
             </StackPanel>
         </Border>
 
-        <Grid>
-            <TextBlock>TODO</TextBlock>
-        </Grid>
+        <StackPanel>
+            <ComboBox ItemsSource="{Binding AvailableAssemblies, Mode=OneTime}" SelectedItem="{Binding SelectedAssembly1}" DisplayMemberPath="AssemblyName"/>
+            <ComboBox ItemsSource="{Binding AvailableAssemblies, Mode=OneTime}" SelectedItem="{Binding SelectedAssembly2}" DisplayMemberPath="AssemblyName"/>
+        </StackPanel>
     </DockPanel>
 </Window>

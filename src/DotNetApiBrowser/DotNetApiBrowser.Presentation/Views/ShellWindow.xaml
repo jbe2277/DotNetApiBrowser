@@ -29,9 +29,9 @@
                     <Setter Property="HeaderTemplate">
                         <Setter.Value>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Header, Mode=OneTime}" Margin="3,0,7,0" TextTrimming="CharacterEllipsis" MaxWidth="200"
-                                               ToolTip="{Binding Header, Mode=OneTime}"/>
+                                <StackPanel Orientation="Horizontal" d:DataContext="{d:DesignInstance vm:CodeEditorViewModel}">
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding AssemblyInfo.AssemblyName, Mode=OneTime}" Margin="3,0,7,0" TextTrimming="CharacterEllipsis" MaxWidth="200"
+                                               ToolTip="{Binding AssemblyInfo.FileName, Mode=OneTime}"/>
                                     <Button Command="{Binding DataContext.CloseAssemblyApiCommand, ElementName=rootContainer}"
                                                 Visibility="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabItem}}, Converter={StaticResource BoolToVisibilityConverter}}"
                                                 Width="16" Height="16" Margin="0,1,0,0" Background="Transparent" BorderBrush="Transparent">

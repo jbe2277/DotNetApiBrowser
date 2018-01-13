@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.Composition;
 using System.Waf.Applications;
+using Waf.DotNetApiBrowser.Applications.DataModels;
 using Waf.DotNetApiBrowser.Applications.Views;
 
 namespace Waf.DotNetApiBrowser.Applications.ViewModels
@@ -12,7 +13,7 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
         {
         }
         
-        public string Header { get; set; }
+        public AssemblyInfo AssemblyInfo { get; set; }
 
         public string Code { get; set; }
     }

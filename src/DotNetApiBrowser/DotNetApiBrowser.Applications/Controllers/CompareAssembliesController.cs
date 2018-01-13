@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.Composition;
+﻿using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Linq;
+using Waf.DotNetApiBrowser.Applications.DataModels;
 using Waf.DotNetApiBrowser.Applications.ViewModels;
 
 namespace Waf.DotNetApiBrowser.Applications.Controllers
@@ -14,8 +17,11 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             this.compareAssembliesViewModel = compareAssembliesViewModel;
         }
 
-        public void Run(object ownerWindow)
+        public void Run(object ownerWindow, IReadOnlyList<AssemblyInfo> availableAssemblies)
         {
+            compareAssembliesViewModel.AvailableAssemblies = availableAssemblies;
+            compareAssembliesViewModel.SelectedAssembly1 = availableAssemblies.FirstOrDefault();
+            compareAssembliesViewModel.SelectedAssembly2 = availableAssemblies.Skip(1).FirstOrDefault();
             compareAssembliesViewModel.ShowDialog(ownerWindow);
         }
     }

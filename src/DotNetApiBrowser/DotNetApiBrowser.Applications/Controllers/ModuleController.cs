@@ -2,10 +2,12 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Waf.Applications;
 using System.Waf.Applications.Services;
 using Waf.CodeAnalysis.AssemblyReaders;
+using Waf.DotNetApiBrowser.Applications.DataModels;
 using Waf.DotNetApiBrowser.Applications.ViewModels;
 
 namespace Waf.DotNetApiBrowser.Applications.Controllers
@@ -73,7 +75,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             {
                 using (ShellViewModel.SetApplicationBusy())
                 {
-                    AddAndSelectAssemblyApi(Path.GetFileNameWithoutExtension(result.FileName), await Task.Run(() => AssemblyReader.Read(result.FileName)));
+                    AddAndSelectAssemblyApi(result.FileName, await Task.Run(() => AssemblyReader.Read(result.FileName)));
                 }
             }
             catch (Exception e)
@@ -90,7 +92,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
                 if (result.assemblyStream == null) return;
                 using (ShellViewModel.SetApplicationBusy())
                 {
-                    AddAndSelectAssemblyApi(Path.GetFileNameWithoutExtension(result.fileName), await Task.Run(() => AssemblyReader.Read(result.assemblyStream, null)));
+                    AddAndSelectAssemblyApi(result.fileName, await Task.Run(() => AssemblyReader.Read(result.assemblyStream, null)));
                 }
             }
         }
@@ -99,7 +101,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         {
             using (var controller = compareAssembliesController.CreateExport())
             {
-                controller.Value.Run(ShellViewModel.View);
+                controller.Value.Run(ShellViewModel.View, assemblyApis.Select(x => x.AssemblyInfo).ToArray());
             }
         }
 
@@ -108,10 +110,10 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             assemblyApis.Remove(ShellViewModel.SelectedAssemblyApi);
         }
 
-        private void AddAndSelectAssemblyApi(string header, string code)
+        private void AddAndSelectAssemblyApi(string fileName, string code)
         {
             var viewModel = codeEditorViewModel.CreateExport().Value;
-            viewModel.Header = header;
+            viewModel.AssemblyInfo = new AssemblyInfo(fileName, Path.GetFileNameWithoutExtension(fileName));
             viewModel.Code = code;
             assemblyApis.Add(viewModel);
             ShellViewModel.SelectedAssemblyApi = viewModel;
