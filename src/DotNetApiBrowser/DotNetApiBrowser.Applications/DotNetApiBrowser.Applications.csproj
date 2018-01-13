@@ -52,6 +52,7 @@
     <Compile Include="DataModels\AssemblyInfo.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IEnvironmentService.cs" />
     <Compile Include="ViewModels\CodeEditorViewModel.cs" />
     <Compile Include="ViewModels\CompareAssembliesViewModel.cs" />
     <Compile Include="ViewModels\OpenFromNugetViewModel.cs" />

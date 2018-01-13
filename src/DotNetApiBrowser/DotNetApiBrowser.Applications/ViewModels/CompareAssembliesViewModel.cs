@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Waf.Applications;
+using System.Windows.Input;
 using Waf.DotNetApiBrowser.Applications.DataModels;
 using Waf.DotNetApiBrowser.Applications.Views;
 
@@ -16,6 +17,8 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
         public CompareAssembliesViewModel(ICompareAssembliesView view) : base(view)
         {
         }
+
+        public ICommand CompareCommand { get; set; }
 
         public IReadOnlyList<AssemblyInfo> AvailableAssemblies { get; set; }
         

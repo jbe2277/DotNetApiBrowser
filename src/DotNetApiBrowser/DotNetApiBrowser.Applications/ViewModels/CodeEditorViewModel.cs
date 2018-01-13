@@ -14,7 +14,5 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
         }
         
         public AssemblyInfo AssemblyInfo { get; set; }
-
-        public string Code { get; set; }
     }
 }

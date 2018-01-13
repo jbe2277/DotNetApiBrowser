@@ -8,7 +8,7 @@
              mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:CodeEditorViewModel}"
              d:DesignHeight="300" d:DesignWidth="300">
     
-    <ctrl:CodeEditor Code="{Binding Code, Mode=OneTime}" IsReadOnly="True" Padding="7">
+    <ctrl:CodeEditor Code="{Binding AssemblyInfo.AssemblyApi, Mode=OneTime}" IsReadOnly="True" Padding="7">
         <ctrl:CodeEditor.ContextMenu>
             <ContextMenu>
                 <MenuItem Header="Find" Command="Find"/>

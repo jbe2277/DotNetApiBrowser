@@ -25,7 +25,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         private readonly AsyncDelegateCommand openFromNugetCommand;
         private readonly DelegateCommand compareAssembliesCommand;
         private readonly DelegateCommand closeAssemblyApiCommand;
-        private readonly ObservableCollection<CodeEditorViewModel> assemblyApis;
+        private readonly ObservableCollection<CodeEditorViewModel> codeEditorViewModels;
 
         [ImportingConstructor]
         public ModuleController(IMessageService messageService, IFileDialogService fileDialogService, ExportFactory<OpenFromNugetController> openFromNugetController,
@@ -41,7 +41,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             openFromNugetCommand = new AsyncDelegateCommand(OpenFromNuget);
             compareAssembliesCommand = new DelegateCommand(CompareAssemblies);
             closeAssemblyApiCommand = new DelegateCommand(CloseAssemblyApi);
-            assemblyApis = new ObservableCollection<CodeEditorViewModel>();
+            codeEditorViewModels = new ObservableCollection<CodeEditorViewModel>();
         }
 
         private ShellViewModel ShellViewModel => shellViewModel.Value;
@@ -56,7 +56,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             ShellViewModel.OpenFromNugetCommand = openFromNugetCommand;
             ShellViewModel.CompareAssembliesCommand = compareAssembliesCommand;
             ShellViewModel.CloseAssemblyApiCommand = closeAssemblyApiCommand;
-            ShellViewModel.AssemblyApis = assemblyApis;
+            ShellViewModel.CodeEditorViewModels = codeEditorViewModels;
             ShellViewModel.Show();
         }
 
@@ -101,22 +101,21 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         {
             using (var controller = compareAssembliesController.CreateExport())
             {
-                controller.Value.Run(ShellViewModel.View, assemblyApis.Select(x => x.AssemblyInfo).ToArray());
+                controller.Value.Run(ShellViewModel.View, codeEditorViewModels.Select(x => x.AssemblyInfo).ToArray());
             }
         }
 
         private void CloseAssemblyApi()
         {
-            assemblyApis.Remove(ShellViewModel.SelectedAssemblyApi);
+            codeEditorViewModels.Remove(ShellViewModel.SelectedCodeEditorViewModel);
         }
 
-        private void AddAndSelectAssemblyApi(string fileName, string code)
+        private void AddAndSelectAssemblyApi(string fileName, string assemblyApi)
         {
             var viewModel = codeEditorViewModel.CreateExport().Value;
-            viewModel.AssemblyInfo = new AssemblyInfo(fileName, Path.GetFileNameWithoutExtension(fileName));
-            viewModel.Code = code;
-            assemblyApis.Add(viewModel);
-            ShellViewModel.SelectedAssemblyApi = viewModel;
+            viewModel.AssemblyInfo = new AssemblyInfo(fileName, Path.GetFileNameWithoutExtension(fileName), assemblyApi);
+            codeEditorViewModels.Add(viewModel);
+            ShellViewModel.SelectedCodeEditorViewModel = viewModel;
         }
     }
 }

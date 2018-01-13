@@ -11,6 +11,7 @@ namespace Waf.CodeAnalysis.AssemblyReaders
 {
     public static class AssemblyReader
     {
+        private static readonly string nl = Environment.NewLine;
         private static MetadataReference Mscorlib { get; } = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
         private static MetadataReference SystemRuntime { get; } = MetadataReference.CreateFromFile(Path.Combine(Path.GetDirectoryName(typeof(object).Assembly.Location), "System.Runtime.dll"));
 
@@ -34,7 +35,7 @@ namespace Waf.CodeAnalysis.AssemblyReaders
 
             foreach (var attribute in assemblySymbol.GetAttributes().DefaultFilter())
             {
-                result.Append("\n[assembly: " + attribute.ToCSharpString() + "]");
+                result.Append(nl + "[assembly: " + attribute.ToCSharpString() + "]");
             }
 
             foreach (var ns in GetAllNamespaces(assemblySymbol.GlobalNamespace))
@@ -42,7 +43,7 @@ namespace Waf.CodeAnalysis.AssemblyReaders
                 var typeMembers = ns.GetTypeMembers().Where(x => x.CanBeReferencedByName && !x.IsImplicitlyDeclared && x.DeclaredAccessibility == Accessibility.Public).ToArray();
                 if (!typeMembers.Any()) continue;
 
-                result.AppendLine(Environment.NewLine);
+                result.AppendLine(nl);
                 result.Append(ns.ToCSharpString());
 
                 foreach (var type in typeMembers)
@@ -75,7 +76,7 @@ namespace Waf.CodeAnalysis.AssemblyReaders
             {
                 AppendDocumentation(results, member, indentString + "    ");
                 AppendAttributes(results, member, indentString + "    ");
-                results.Append("\n" + indentString + "    " + member.ToCSharpString());
+                results.Append(nl + indentString + "    " + member.ToCSharpString());
                 if (member.Kind == SymbolKind.Field)
                 {
                     var field = (IFieldSymbol)member;
@@ -100,10 +101,10 @@ namespace Waf.CodeAnalysis.AssemblyReaders
 
             try
             {
-                doc = string.Join("\n", XDocument.Parse("<Root>" + doc + "</Root>").Root.Elements().Select(x => indentString + "/// " + x.ToString()));
+                doc = string.Join(nl, XDocument.Parse("<Root>" + doc + "</Root>").Root.Elements().Select(x => indentString + "/// " + x.ToString()));
             }
             catch (Exception) { }
-            results.Append("\n" + doc);
+            results.Append(nl + doc);
         }
 
         private static void AppendAttributes(StringBuilder results, ISymbol symbol, string indentString)
@@ -111,7 +112,7 @@ namespace Waf.CodeAnalysis.AssemblyReaders
             var attributes = symbol.GetAttributes().DefaultFilter().ToArray();
             if (attributes.Length > 0)
             {
-                results.Append("\n" + indentString + "[" + string.Join(", ", attributes.Select(x => x.ToCSharpString(symbol))) + "]");
+                results.Append(nl + indentString + "[" + string.Join(", ", attributes.Select(x => x.ToCSharpString(symbol))) + "]");
             }
         }
 

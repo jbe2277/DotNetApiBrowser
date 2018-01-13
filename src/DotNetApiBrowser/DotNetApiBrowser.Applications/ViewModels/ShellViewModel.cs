@@ -12,7 +12,7 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
     public class ShellViewModel : ViewModel<IShellView>
     {
         private readonly List<ApplicationBusyContext> applicationBusyContext;
-        private CodeEditorViewModel selectedAssemblyApi;
+        private CodeEditorViewModel selectedCodeEditorViewModel;
         private bool isApplicationBusy;
 
         [ImportingConstructor]
@@ -34,12 +34,12 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
 
         public ICommand CloseAssemblyApiCommand { get; set; }
 
-        public IReadOnlyList<CodeEditorViewModel> AssemblyApis { get; set; }
+        public IReadOnlyList<CodeEditorViewModel> CodeEditorViewModels { get; set; }
 
-        public CodeEditorViewModel SelectedAssemblyApi
+        public CodeEditorViewModel SelectedCodeEditorViewModel
         {
-            get => selectedAssemblyApi;
-            set => SetProperty(ref selectedAssemblyApi, value);
+            get => selectedCodeEditorViewModel;
+            set => SetProperty(ref selectedCodeEditorViewModel, value);
         }
         
         public bool IsApplicationBusy

@@ -23,7 +23,7 @@
             </MenuItem>
         </Menu>
 
-        <TabControl Grid.Row="1" ItemsSource="{Binding AssemblyApis}" SelectedItem="{Binding SelectedAssemblyApi}" Margin="0,2,0,0" Padding="0" BorderThickness="0,1,0,0">
+        <TabControl Grid.Row="1" ItemsSource="{Binding CodeEditorViewModels, Mode=OneTime}" SelectedItem="{Binding SelectedCodeEditorViewModel}" Margin="0,2,0,0" Padding="0" BorderThickness="0,1,0,0">
             <TabControl.ItemContainerStyle>
                 <Style TargetType="TabItem">
                     <Setter Property="HeaderTemplate">

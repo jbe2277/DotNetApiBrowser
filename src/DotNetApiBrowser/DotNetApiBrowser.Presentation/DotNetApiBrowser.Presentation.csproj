@@ -66,6 +66,7 @@
     <Compile Include="Converters\NugetAssemblyPathConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Services\EnvironmentService.cs" />
     <Compile Include="Views\CodeEditorView.xaml.cs">
       <DependentUpon>CodeEditorView.xaml</DependentUpon>
     </Compile>
