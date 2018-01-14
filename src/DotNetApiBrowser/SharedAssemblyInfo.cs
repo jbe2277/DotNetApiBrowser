@@ -6,7 +6,7 @@ using System.Resources;
 
 [assembly: AssemblyCompany("Waf")]
 [assembly: AssemblyProduct("Waf DotNetApiBrowser")]
-[assembly: AssemblyCopyright("Copyright © 2017")]
+[assembly: AssemblyCopyright("Copyright © 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
