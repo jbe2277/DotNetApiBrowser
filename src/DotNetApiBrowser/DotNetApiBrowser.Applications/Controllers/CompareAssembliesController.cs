@@ -33,13 +33,17 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
 
         public void Run(object ownerWindow, IReadOnlyList<AssemblyInfo> availableAssemblies)
         {
+            var path = environmentService.GetDefaultDiffToolPath();
+            if (!string.IsNullOrEmpty(path.path)) compareAssembliesViewModel.DiffToolPath = path.path;
+            if (!string.IsNullOrEmpty(path.arguments)) compareAssembliesViewModel.DiffToolArguments = path.arguments;
+
             compareAssembliesViewModel.CompareCommand = compareCommand;
             compareAssembliesViewModel.AvailableAssemblies = availableAssemblies;
             compareAssembliesViewModel.SelectedAssembly1 = availableAssemblies.FirstOrDefault();
             compareAssembliesViewModel.SelectedAssembly2 = availableAssemblies.Skip(1).FirstOrDefault();
             compareAssembliesViewModel.ShowDialog(ownerWindow);
         }
-
+        
         private async Task CompareAsync()
         {
             compareAssembliesViewModel.IsClosing = true;
@@ -59,8 +63,8 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
                 return;
             }
             
-            var devenv = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\devenv.exe";
-            var args = "/Diff \"" + assemblyApi1FileName + "\" \"" + assemblyApi2FileName + "\"";
+            var devenv = compareAssembliesViewModel.DiffToolPath;
+            var args = (compareAssembliesViewModel.DiffToolArguments ?? "") + " \"" + assemblyApi1FileName + "\" \"" + assemblyApi2FileName + "\"";
 
             var process = new Process
             {
@@ -69,6 +73,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             };
             process.Exited += async (sender, e) =>
             {
+                // Note: devenv will exit immediately; another process will open the files but it still works
                 process.Dispose();
                 try
                 {

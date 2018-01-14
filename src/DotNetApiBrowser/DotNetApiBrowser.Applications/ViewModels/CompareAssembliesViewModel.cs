@@ -12,6 +12,8 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
     {
         private AssemblyInfo selectedAssembly1;
         private AssemblyInfo selectedAssembly2;
+        private string diffToolPath;
+        private string diffToolArguments;
         private bool isClosing;
 
         [ImportingConstructor]
@@ -33,6 +35,18 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
         {
             get { return selectedAssembly2; }
             set { SetProperty(ref selectedAssembly2, value); }
+        }
+        
+        public string DiffToolPath
+        {
+            get { return diffToolPath; }
+            set { SetProperty(ref diffToolPath, value); }
+        }
+        
+        public string DiffToolArguments
+        {
+            get { return diffToolArguments; }
+            set { SetProperty(ref diffToolArguments, value); }
         }
         
         public bool IsClosing

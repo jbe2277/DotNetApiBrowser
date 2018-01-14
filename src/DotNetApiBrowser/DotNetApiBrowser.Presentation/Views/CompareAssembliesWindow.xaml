@@ -18,6 +18,8 @@
             <StackPanel>
                 <ComboBox ItemsSource="{Binding AvailableAssemblies, Mode=OneTime}" SelectedItem="{Binding SelectedAssembly1}" DisplayMemberPath="AssemblyName"/>
                 <ComboBox ItemsSource="{Binding AvailableAssemblies, Mode=OneTime}" SelectedItem="{Binding SelectedAssembly2}" DisplayMemberPath="AssemblyName"/>
+                <TextBox Text="{Binding DiffToolPath}"/>
+                <TextBox Text="{Binding DiffToolArguments}"/>
             </StackPanel>
             <ProgressBar IsIndeterminate="true" Visibility="{Binding IsClosing, Converter={StaticResource BoolToVisibilityConverter}}"/>
         </Grid>
