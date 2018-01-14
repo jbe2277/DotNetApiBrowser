@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:Waf.DotNetApiBrowser.Applications.ViewModels;assembly=Waf.DotNetApiBrowser.Applications"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:CompareAssembliesViewModel}"
-        Title="Compare assemblies" Height="400" Width="550">
+        Title="Compare assemblies" Height="400" Width="550" IsEnabled="{Binding IsClosing, Converter={StaticResource InvertBooleanConverter}}">
     <DockPanel>
         <Border DockPanel.Dock="Bottom" Background="{x:Static SystemColors.ControlBrush}">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="11">
@@ -14,9 +14,12 @@
             </StackPanel>
         </Border>
 
-        <StackPanel>
-            <ComboBox ItemsSource="{Binding AvailableAssemblies, Mode=OneTime}" SelectedItem="{Binding SelectedAssembly1}" DisplayMemberPath="AssemblyName"/>
-            <ComboBox ItemsSource="{Binding AvailableAssemblies, Mode=OneTime}" SelectedItem="{Binding SelectedAssembly2}" DisplayMemberPath="AssemblyName"/>
-        </StackPanel>
+        <Grid>
+            <StackPanel>
+                <ComboBox ItemsSource="{Binding AvailableAssemblies, Mode=OneTime}" SelectedItem="{Binding SelectedAssembly1}" DisplayMemberPath="AssemblyName"/>
+                <ComboBox ItemsSource="{Binding AvailableAssemblies, Mode=OneTime}" SelectedItem="{Binding SelectedAssembly2}" DisplayMemberPath="AssemblyName"/>
+            </StackPanel>
+            <ProgressBar IsIndeterminate="true" Visibility="{Binding IsClosing, Converter={StaticResource BoolToVisibilityConverter}}"/>
+        </Grid>
     </DockPanel>
 </Window>

@@ -12,7 +12,8 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
     {
         private AssemblyInfo selectedAssembly1;
         private AssemblyInfo selectedAssembly2;
-        
+        private bool isClosing;
+
         [ImportingConstructor]
         public CompareAssembliesViewModel(ICompareAssembliesView view) : base(view)
         {
@@ -34,9 +35,20 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
             set { SetProperty(ref selectedAssembly2, value); }
         }
         
+        public bool IsClosing
+        {
+            get { return isClosing; }
+            set { SetProperty(ref isClosing, value); }
+        }
+        
         public void ShowDialog(object ownerWindow)
         {
             ViewCore.ShowDialog(ownerWindow);
+        }
+
+        public void Close()
+        {
+            ViewCore.Close();
         }
     }
 }
