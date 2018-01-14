@@ -55,6 +55,8 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             catch (Exception ex)
             {
                 ShowError("Could not create the temporary files: " + ex.Message);
+                compareAssembliesViewModel.Close();
+                return;
             }
             
             var devenv = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\devenv.exe";
