@@ -7,9 +7,17 @@ namespace Waf.CodeAnalysis.AssemblyReaders
 {
     internal static class RoslynHelper
     {
+        private static readonly string[] attributesToExclude = new[]
+        {
+            "System.Diagnostics.CodeAnalysis.SuppressMessageAttribute",
+            "System.Runtime.CompilerServices.IteratorStateMachine",
+            "System.Runtime.CompilerServices.AsyncStateMachine",
+            "System.ComponentModel.EditorBrowsable"
+        };
+
         public static IEnumerable<AttributeData> DefaultFilter(this IEnumerable<AttributeData> attributes)
         {
-            return attributes.Where(x => x.AttributeClass.ToString() != "System.Diagnostics.CodeAnalysis.SuppressMessageAttribute");
+            return attributes.Where(x => !attributesToExclude.Any(y => x.AttributeClass.ToString().StartsWith(y, StringComparison.Ordinal)));
         }
 
         public static string ToCSharpString(this INamespaceSymbol symbol)
