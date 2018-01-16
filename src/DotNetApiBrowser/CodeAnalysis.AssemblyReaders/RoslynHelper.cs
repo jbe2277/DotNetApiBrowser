@@ -60,7 +60,7 @@ namespace Waf.CodeAnalysis.AssemblyReaders
                 x.Kind == SymbolKind.Property ? (x.IsStatic ? 4 : 5) :
                 x.Kind == SymbolKind.Event ? (x.IsStatic ? 6 : 7) :
                 x.Kind == SymbolKind.Method ? (x.IsStatic ? 8 : 9) :
-                100);
+                100).ThenBy(x => x.ToString());
         }
 
         public static string ToCSharpString(this ISymbol symbol)

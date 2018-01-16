@@ -33,22 +33,22 @@ namespace Waf.CodeAnalysis.AssemblyReaders
             var result = new StringBuilder();
             result.AppendLine("// " + assemblySymbol);
 
-            foreach (var attribute in assemblySymbol.GetAttributes().DefaultFilter())
+            foreach (var attribute in assemblySymbol.GetAttributes().DefaultFilter().OrderBy(x => x.ToString()))
             {
                 result.Append(nl + "[assembly: " + attribute.ToCSharpString() + "]");
             }
 
-            foreach (var ns in GetAllNamespaces(assemblySymbol.GlobalNamespace))
+            foreach (var n in GetAllNamespaces(assemblySymbol.GlobalNamespace).Select(x => (ns:x, name:x.ToCSharpString())).OrderBy(x => x.name))
             {
-                var typeMembers = ns.GetTypeMembers().Where(x => x.CanBeReferencedByName && !x.IsImplicitlyDeclared && x.DeclaredAccessibility == Accessibility.Public).ToArray();
+                var typeMembers = n.ns.GetTypeMembers().Where(x => x.CanBeReferencedByName && !x.IsImplicitlyDeclared && x.DeclaredAccessibility == Accessibility.Public).ToArray();
                 if (!typeMembers.Any()) continue;
 
                 result.AppendLine(nl);
-                result.Append(ns.ToCSharpString());
+                result.Append(n.name);
 
-                foreach (var type in typeMembers)
+                foreach (var t in typeMembers.Select(x => (type:x, name:x.ToString())).OrderBy(x => x.name))
                 {
-                    ReadTypeSymbol(type, result);
+                    ReadTypeSymbol(t.type, result);
                 }
             }
 
