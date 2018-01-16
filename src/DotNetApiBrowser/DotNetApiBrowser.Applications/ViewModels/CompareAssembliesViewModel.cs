@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Threading.Tasks;
 using System.Waf.Applications;
 using System.Windows.Input;
 using Waf.DotNetApiBrowser.Applications.DataModels;
@@ -54,10 +55,10 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
             get { return isClosing; }
             set { SetProperty(ref isClosing, value); }
         }
-        
-        public void ShowDialog(object ownerWindow)
+
+        public Task ShowDialogAsync(object ownerWindow)
         {
-            ViewCore.ShowDialog(ownerWindow);
+            return ViewCore.ShowDialogAsync(ownerWindow);
         }
 
         public void Close()

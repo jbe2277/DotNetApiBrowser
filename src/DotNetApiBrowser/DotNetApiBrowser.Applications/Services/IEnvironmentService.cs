@@ -1,9 +1,11 @@
-﻿namespace Waf.DotNetApiBrowser.Applications.Services
+﻿using System.Threading.Tasks;
+
+namespace Waf.DotNetApiBrowser.Applications.Services
 {
     public interface IEnvironmentService
     {
         string GetTempFileName();
 
-        (string path, string arguments) GetDefaultDiffToolPath();
+        Task<(string path, string arguments)> GetDefaultDiffToolPathAsync();
     }
 }

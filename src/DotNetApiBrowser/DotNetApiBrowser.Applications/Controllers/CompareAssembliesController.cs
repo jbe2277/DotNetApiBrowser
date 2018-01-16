@@ -31,17 +31,20 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             compareCommand = new AsyncDelegateCommand(CompareAsync);
         }
 
-        public void Run(object ownerWindow, IReadOnlyList<AssemblyInfo> availableAssemblies)
+        public async void Run(object ownerWindow, IReadOnlyList<AssemblyInfo> availableAssemblies)
         {
-            var path = environmentService.GetDefaultDiffToolPath();
-            if (!string.IsNullOrEmpty(path.path)) compareAssembliesViewModel.DiffToolPath = path.path;
-            if (!string.IsNullOrEmpty(path.arguments)) compareAssembliesViewModel.DiffToolArguments = path.arguments;
+            var viewModel = compareAssembliesViewModel;
+            viewModel.CompareCommand = compareCommand;
+            viewModel.AvailableAssemblies = availableAssemblies;
+            viewModel.SelectedAssembly1 = availableAssemblies.FirstOrDefault();
+            viewModel.SelectedAssembly2 = availableAssemblies.Skip(1).FirstOrDefault();
+            var dialogTask = viewModel.ShowDialogAsync(ownerWindow);
 
-            compareAssembliesViewModel.CompareCommand = compareCommand;
-            compareAssembliesViewModel.AvailableAssemblies = availableAssemblies;
-            compareAssembliesViewModel.SelectedAssembly1 = availableAssemblies.FirstOrDefault();
-            compareAssembliesViewModel.SelectedAssembly2 = availableAssemblies.Skip(1).FirstOrDefault();
-            compareAssembliesViewModel.ShowDialog(ownerWindow);
+            var path = await environmentService.GetDefaultDiffToolPathAsync();
+            if (!string.IsNullOrEmpty(path.path) && string.IsNullOrEmpty(viewModel.DiffToolPath)) viewModel.DiffToolPath = path.path;
+            if (!string.IsNullOrEmpty(path.arguments) && string.IsNullOrEmpty(viewModel.DiffToolArguments)) viewModel.DiffToolArguments = path.arguments;
+
+            await dialogTask;
         }
         
         private async Task CompareAsync()
