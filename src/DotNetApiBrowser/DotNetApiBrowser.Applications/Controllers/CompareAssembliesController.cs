@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
@@ -28,32 +29,36 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             this.messageService = messageService;
             this.environmentService = environmentService;
             this.compareAssembliesViewModel = compareAssembliesViewModel;
-            compareCommand = new AsyncDelegateCommand(CompareAsync);
+            compareCommand = new AsyncDelegateCommand(CompareAsync, CanCompare);
+            compareAssembliesViewModel.Model.PropertyChanged += CompareAssembliesDataModelPropertyChanged;
         }
 
         public async void Run(object ownerWindow, IReadOnlyList<AssemblyInfo> availableAssemblies)
         {
             var viewModel = compareAssembliesViewModel;
             viewModel.CompareCommand = compareCommand;
-            viewModel.AvailableAssemblies = availableAssemblies;
-            viewModel.SelectedAssembly1 = availableAssemblies.FirstOrDefault();
-            viewModel.SelectedAssembly2 = availableAssemblies.Skip(1).FirstOrDefault();
+            viewModel.Model.AvailableAssemblies = availableAssemblies;
+            viewModel.Model.SelectedAssembly1 = availableAssemblies.FirstOrDefault();
+            viewModel.Model.SelectedAssembly2 = availableAssemblies.Skip(1).FirstOrDefault();
+            viewModel.Model.Validate();
             var dialogTask = viewModel.ShowDialogAsync(ownerWindow);
 
             var path = await environmentService.GetDefaultDiffToolPathAsync();
-            if (!string.IsNullOrEmpty(path.path) && string.IsNullOrEmpty(viewModel.DiffToolPath)) viewModel.DiffToolPath = path.path;
-            if (!string.IsNullOrEmpty(path.arguments) && string.IsNullOrEmpty(viewModel.DiffToolArguments)) viewModel.DiffToolArguments = path.arguments;
+            if (!string.IsNullOrEmpty(path.path) && string.IsNullOrEmpty(viewModel.Model.DiffToolPath)) viewModel.Model.DiffToolPath = path.path;
+            if (!string.IsNullOrEmpty(path.arguments) && string.IsNullOrEmpty(viewModel.Model.DiffToolArguments)) viewModel.Model.DiffToolArguments = path.arguments;
 
             await dialogTask;
         }
-        
+
+        private bool CanCompare() => !compareAssembliesViewModel.Model.HasErrors;
+       
         private async Task CompareAsync()
         {
             compareAssembliesViewModel.IsClosing = true;
             var assemblyApi1FileName = environmentService.GetTempFileName();
             var assemblyApi2FileName = environmentService.GetTempFileName();
-            var task1 = WriteTextAsync(assemblyApi1FileName, compareAssembliesViewModel.SelectedAssembly1.AssemblyApi);
-            var task2 = WriteTextAsync(assemblyApi2FileName, compareAssembliesViewModel.SelectedAssembly2.AssemblyApi);
+            var task1 = WriteTextAsync(assemblyApi1FileName, compareAssembliesViewModel.Model.SelectedAssembly1.AssemblyApi);
+            var task2 = WriteTextAsync(assemblyApi2FileName, compareAssembliesViewModel.Model.SelectedAssembly2.AssemblyApi);
 
             try
             {
@@ -66,8 +71,8 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
                 return;
             }
             
-            var devenv = compareAssembliesViewModel.DiffToolPath;
-            var args = (compareAssembliesViewModel.DiffToolArguments ?? "") + " \"" + assemblyApi1FileName + "\" \"" + assemblyApi2FileName + "\"";
+            var devenv = compareAssembliesViewModel.Model.DiffToolPath;
+            var args = (compareAssembliesViewModel.Model.DiffToolArguments ?? "") + " \"" + assemblyApi1FileName + "\" \"" + assemblyApi2FileName + "\"";
 
             var process = new Process
             {
@@ -100,6 +105,14 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
                 ShowError("Could not start the diff tool: " + ex.Message);
             }
             compareAssembliesViewModel.Close();
+        }
+
+        private void CompareAssembliesDataModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(CompareAssembliesDataModel.HasErrors))
+            {
+                compareCommand.RaiseCanExecuteChanged();
+            }
         }
 
         private void ShowError(string message)

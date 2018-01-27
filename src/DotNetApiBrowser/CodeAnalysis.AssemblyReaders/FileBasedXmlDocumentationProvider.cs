@@ -23,8 +23,7 @@ namespace Waf.CodeAnalysis.AssemblyReaders
 
         public override bool Equals(object obj)
         {
-            var other = obj as FileBasedXmlDocumentationProvider;
-            return other != null && filePath == other.filePath;
+            return obj is FileBasedXmlDocumentationProvider other && filePath == other.filePath;
         }
 
         public override int GetHashCode()
@@ -57,6 +56,7 @@ namespace Waf.CodeAnalysis.AssemblyReaders
             }
             catch (Exception)
             {
+                // Ignore exceptions
             }
             return commentsDictionary;
         }

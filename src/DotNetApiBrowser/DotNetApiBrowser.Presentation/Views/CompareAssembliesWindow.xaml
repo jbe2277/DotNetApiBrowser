@@ -5,7 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:Waf.DotNetApiBrowser.Applications.ViewModels;assembly=Waf.DotNetApiBrowser.Applications"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:CompareAssembliesViewModel}"
-        Title="Compare assemblies" Height="400" Width="550" IsEnabled="{Binding IsClosing, Converter={StaticResource InvertBooleanConverter}}">
+        Title="Compare assemblies" Icon="{StaticResource AppIcon}" Height="400" Width="550" IsEnabled="{Binding IsClosing, Converter={StaticResource InvertBooleanConverter}}">
+    
+    <Window.Resources>
+        <Style x:Key="SelectAssembly" TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+            <Setter Property="ItemsSource" Value="{Binding Model.AvailableAssemblies, Mode=OneTime}"/>
+            <Setter Property="ToolTip" Value="{Binding SelectedItem, RelativeSource={RelativeSource Self}, Converter={StaticResource AssemblyInfoToToolTipConverter}}"/>
+            <Setter Property="ItemTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock><Run Text="{Binding AssemblyName, Mode=OneTime}"/> <Run Text="{Binding Version, Mode=OneTime}"></Run>
+                        </TextBlock>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <DockPanel>
         <Border DockPanel.Dock="Bottom" Background="{x:Static SystemColors.ControlBrush}">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="11">
@@ -15,12 +31,44 @@
         </Border>
 
         <Grid>
-            <StackPanel>
-                <ComboBox ItemsSource="{Binding AvailableAssemblies, Mode=OneTime}" SelectedItem="{Binding SelectedAssembly1}" DisplayMemberPath="AssemblyName"/>
-                <ComboBox ItemsSource="{Binding AvailableAssemblies, Mode=OneTime}" SelectedItem="{Binding SelectedAssembly2}" DisplayMemberPath="AssemblyName"/>
-                <TextBox Text="{Binding DiffToolPath}"/>
-                <TextBox Text="{Binding DiffToolArguments}"/>
-            </StackPanel>
+            <Grid Margin="11,11,11,22">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="{StaticResource Layout.ColumnSpace}"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="0"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="{StaticResource Layout.RowSpace}"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="{StaticResource Layout.LargeRowSpace}"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="{StaticResource Layout.RowSpace}"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="{StaticResource Layout.RowSpace}"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Text="Error: Compare requires that at least two assemblies are opened first." 
+                           Visibility="{Binding Model.NotEnoughAvailableAssemblies, Mode=OneTime, Converter={StaticResource BoolToVisibilityConverter}}"
+                           Foreground="DarkRed" FontWeight="SemiBold" Margin="0,0,0,22"/>
+
+                <TextBlock Grid.Column="0" Grid.Row="2" Text="Assembly 1:"/>
+                <ComboBox Grid.Column="2" Grid.Row="2" SelectedItem="{Binding Model.SelectedAssembly1}" Style="{StaticResource SelectAssembly}"/>
+
+                <TextBlock Grid.Column="0" Grid.Row="4" Text="Assembly 2:"/>
+                <ComboBox Grid.Column="2" Grid.Row="4" SelectedItem="{Binding Model.SelectedAssembly2}" Style="{StaticResource SelectAssembly}"/>
+
+                <TextBlock Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="3" Text="Diff Tool" FontWeight="SemiBold"/>
+
+                <TextBlock Grid.Column="0" Grid.Row="8" Text="Tool path:"/>
+                <TextBox Grid.Column="2" Grid.Row="8" Text="{Binding Model.DiffToolPath}"/>
+                
+                <TextBlock Grid.Column="0" Grid.Row="10" Text="Arguments:"/>
+                <TextBox Grid.Column="2" Grid.Row="10" Text="{Binding Model.DiffToolArguments}"/>
+            </Grid>
             <ProgressBar IsIndeterminate="true" Visibility="{Binding IsClosing, Converter={StaticResource BoolToVisibilityConverter}}"/>
         </Grid>
     </DockPanel>

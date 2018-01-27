@@ -15,13 +15,16 @@ namespace Waf.CodeAnalysis.AssemblyReaders
         private static MetadataReference Mscorlib { get; } = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
         private static MetadataReference SystemRuntime { get; } = MetadataReference.CreateFromFile(Path.Combine(Path.GetDirectoryName(typeof(object).Assembly.Location), "System.Runtime.dll"));
 
-        public static string Read(string assemblyPath, bool showXmlComments = false)
+        public static (Version version, string api) Read(string assemblyPath, bool showXmlComments = false)
         {
             var documentation = showXmlComments ? new FileBasedXmlDocumentationProvider(Path.ChangeExtension(assemblyPath, ".xml")) : null;
-            return Read(File.OpenRead(assemblyPath), documentation);
+            using (var fileStream = new FileStream(assemblyPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                return Read(fileStream, documentation);
+            }
         }
 
-        public static string Read(Stream assemblyStream, DocumentationProvider documentation)
+        public static (Version version, string api) Read(Stream assemblyStream, DocumentationProvider documentation)
         {
             var assemblyReference = MetadataReference.CreateFromStream(assemblyStream, documentation: documentation);
 
@@ -52,7 +55,7 @@ namespace Waf.CodeAnalysis.AssemblyReaders
                 }
             }
 
-            return result.ToString();
+            return (assemblySymbol.Identity.Version, result.ToString());
         }
 
         private static void ReadTypeSymbol(INamedTypeSymbol type, StringBuilder results, int indent = 4)
@@ -101,9 +104,13 @@ namespace Waf.CodeAnalysis.AssemblyReaders
 
             try
             {
-                doc = string.Join(nl, XDocument.Parse("<Root>" + doc + "</Root>").Root.Elements().Select(x => indentString + "/// " + x.ToString()));
+                doc = string.Join(nl, XDocument.Parse("<Root>" + doc + "</Root>").Root.Elements()
+                        .Select(x => indentString + "/// " + x.ToString()));
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+                // Ignore exceptions
+            }
             results.Append(nl + doc);
         }
 

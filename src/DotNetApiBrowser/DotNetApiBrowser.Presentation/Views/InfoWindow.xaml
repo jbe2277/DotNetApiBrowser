@@ -1,0 +1,78 @@
+﻿<Window x:Class="Waf.DotNetApiBrowser.Presentation.Views.InfoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:Waf.DotNetApiBrowser.Applications.ViewModels;assembly=Waf.DotNetApiBrowser.Applications"
+        mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:InfoViewModel}"
+        Title="Info" Icon="{StaticResource AppIcon}" MinWidth="200" MinHeight="120" 
+        SizeToContent="WidthAndHeight" ShowInTaskbar="False" ResizeMode="NoResize">
+
+    <DockPanel>
+        <Border DockPanel.Dock="Bottom" Background="{StaticResource {x:Static SystemColors.ControlBrushKey}}" Margin="0,11,0,0">
+            <Button Content="Ok" IsDefault="True" IsCancel="True" HorizontalAlignment="Center" Width="75" Height="23" Margin="11"/>
+        </Border>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Image x:Name="applicationImage" Stretch="None" Margin="11,22,11,11"/>
+
+            <Grid Margin="0,0,22,11" VerticalAlignment="Center">
+                <Grid.Resources>
+                    <Style TargetType="Label">
+                        <Setter Property="Margin" Value="6"/>
+                    </Style>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Label Content="Product" Grid.Row="0"/>
+                <Label Content="{Binding ProductName}" Grid.Column="1"/>
+
+                <Label Content="Version" Grid.Row="1"/>
+                <Label Content="{Binding Version}" Grid.Column="1" Grid.Row="1"/>
+
+                <Label Content="License" Grid.Row="2"/>
+                <Label Grid.Column="1" Grid.Row="2">
+                    <Hyperlink Command="{Binding ShowWebsiteCommand}" CommandParameter="https://github.com/jbe2277/DotNetApiBrowser/blob/master/LICENSE">The MIT License (MIT)</Hyperlink>
+                </Label>
+
+                <Label Content="Website" Grid.Row="3"/>
+                <Label Grid.Column="1" Grid.Row="3">
+                    <Hyperlink Command="{Binding ShowWebsiteCommand}" CommandParameter="https://jbe2277.github.io/DotNetApiBrowser">jbe2277.github.io/DotNetApiBrowser</Hyperlink>
+                </Label>
+
+                <Label Content="Operating System" Grid.Row="4"/>
+                <Label Content="{Binding OSVersion}" Grid.Column="1" Grid.Row="4"/>
+
+                <Label Content=".Net Framework" Grid.Row="5"/>
+                <Label Grid.Column="1" Grid.Row="5">
+                    <TextBlock>
+                        <Run Text="{Binding NetVersion, Mode=OneWay}"/>
+                        <Run>
+                            <Run.Style>
+                                <Style TargetType="Run">
+                                    <Setter Property="Text" Value="(32 Bit)"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Is64BitProcess}" Value="True">
+                                            <Setter Property="Text" Value="(64 Bit)"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Run.Style>
+                        </Run>
+                    </TextBlock>
+                </Label>
+            </Grid>
+        </StackPanel>
+    </DockPanel>
+</Window>

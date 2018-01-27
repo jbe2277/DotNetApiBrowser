@@ -25,8 +25,7 @@ namespace Waf.DotNetApiBrowser.Presentation.Views
         {
             if (e.Key == Key.Enter)
             {
-                var binding = BindingOperations.GetBindingExpression(searchTextBox, TextBox.TextProperty);
-                binding.UpdateSource();
+                BindingOperations.GetBindingExpression(searchTextBox, TextBox.TextProperty).UpdateSource();
             }
         }
     }

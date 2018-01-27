@@ -23,38 +23,38 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
         
         public string SearchText
         {
-            get { return searchText; }
-            set { SetProperty(ref searchText, value); }
+            get => searchText;
+            set => SetProperty(ref searchText, value);
         }
         
         public bool IncludePrerelease
         {
-            get { return includePrerelease; }
-            set { SetProperty(ref includePrerelease, value); }
+            get => includePrerelease;
+            set => SetProperty(ref includePrerelease, value);
         }
         
         public IReadOnlyList<IPackageSearchMetadata> NugetPackages
         {
-            get { return nugetPackages; }
-            set { SetProperty(ref nugetPackages, value); }
+            get => nugetPackages;
+            set => SetProperty(ref nugetPackages, value);
         }
         
         public IPackageSearchMetadata SelectedNugetPackage
         {
-            get { return selectedNugetPackage; }
-            set { SetProperty(ref selectedNugetPackage, value); }
+            get => selectedNugetPackage;
+            set => SetProperty(ref selectedNugetPackage, value);
         }
         
         public IReadOnlyList<VersionInfo> PackageVersions
         {
-            get { return packageVersions; }
-            set { SetProperty(ref packageVersions, value); }
+            get => packageVersions;
+            set => SetProperty(ref packageVersions, value);
         }
 
         public VersionInfo SelectedPackageVersion
         {
-            get { return selectedPackageVersion; }
-            set { SetProperty(ref selectedPackageVersion, value); }
+            get => selectedPackageVersion;
+            set => SetProperty(ref selectedPackageVersion, value);
         }
     }
 }

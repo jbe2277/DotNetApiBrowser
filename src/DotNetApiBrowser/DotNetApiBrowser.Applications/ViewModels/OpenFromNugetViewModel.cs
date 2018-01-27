@@ -23,16 +23,16 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
         
         public object ContentView
         {
-            get { return contentView; }
-            set { SetProperty(ref contentView, value); }
+            get => contentView;
+            set => SetProperty(ref contentView, value);
         }
 
         public bool IsVisible { get; private set; }
         
         public bool IsClosing
         {
-            get { return isClosing; }
-            set { SetProperty(ref isClosing, value); }
+            get => isClosing;
+            set => SetProperty(ref isClosing, value);
         }
         
         public async Task ShowDialogAsync(object ownerWindow)

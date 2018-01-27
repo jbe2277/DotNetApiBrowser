@@ -4,6 +4,8 @@
                     xmlns:c="clr-namespace:Waf.DotNetApiBrowser.Presentation.Converters">
 
     <waf:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    
+    <waf:ValidationErrorsConverter x:Key="ValidationErrorsConverter"/>
 
     <waf:InvertBooleanConverter x:Key="InvertBooleanConverter"/>
 
@@ -12,5 +14,7 @@
     <c:DownloadCountConverter x:Key="DownloadCountConverter"/>
 
     <c:NugetAssemblyPathConverter x:Key="NugetAssemblyPathConverter"/>
+
+    <c:AssemblyInfoToToolTipConverter x:Key="AssemblyInfoToToolTipConverter"/>
 
 </ResourceDictionary>

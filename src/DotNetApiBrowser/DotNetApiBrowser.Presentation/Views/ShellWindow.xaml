@@ -5,10 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:Waf.DotNetApiBrowser.Applications.ViewModels;assembly=Waf.DotNetApiBrowser.Applications"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:ShellViewModel}"
-        Title="{Binding Title, Mode=OneTime}" Width="800" Height="600">
+        Title="{Binding Title, Mode=OneTime}" Icon="{StaticResource AppIcon}" Width="800" Height="600">
 
     <Window.InputBindings>
         <KeyBinding Key="O" Modifiers="Ctrl" Command="{Binding OpenFileCommand, Mode=OneTime}"/>
+        <KeyBinding Key="F1" Command="{Binding InfoCommand, Mode=OneTime}"/>
     </Window.InputBindings>
     
     <DockPanel x:Name="rootContainer">
@@ -21,9 +22,17 @@
                 <Separator/>
                 <MenuItem Header="E_xit" Command="{Binding ExitCommand, Mode=OneTime}"/>
             </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Header="Find" Command="Find"/>
+                <Separator/>
+                <MenuItem Header="_Copy" Command="Copy"/>
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="_About..." Command="{Binding InfoCommand, Mode=OneTime}" InputGestureText="F1"/>
+            </MenuItem>
         </Menu>
 
-        <TabControl Grid.Row="1" ItemsSource="{Binding CodeEditorViewModels, Mode=OneTime}" SelectedItem="{Binding SelectedCodeEditorViewModel}" Margin="0,2,0,0" Padding="0" BorderThickness="0,1,0,0">
+        <TabControl ItemsSource="{Binding CodeEditorViewModels, Mode=OneTime}" SelectedItem="{Binding SelectedCodeEditorViewModel}" Margin="0,2,0,0" Padding="0" BorderThickness="0,1,0,0">
             <TabControl.ItemContainerStyle>
                 <Style TargetType="TabItem">
                     <Setter Property="HeaderTemplate">
@@ -31,7 +40,7 @@
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" d:DataContext="{d:DesignInstance vm:CodeEditorViewModel}">
                                     <TextBlock VerticalAlignment="Center" Text="{Binding AssemblyInfo.AssemblyName, Mode=OneTime}" Margin="3,0,7,0" TextTrimming="CharacterEllipsis" MaxWidth="200"
-                                               ToolTip="{Binding AssemblyInfo.FileName, Mode=OneTime}"/>
+                                               ToolTip="{Binding AssemblyInfo, Mode=OneTime, Converter={StaticResource AssemblyInfoToToolTipConverter}}"/>
                                     <Button Command="{Binding DataContext.CloseAssemblyApiCommand, ElementName=rootContainer}"
                                                 Visibility="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabItem}}, Converter={StaticResource BoolToVisibilityConverter}}"
                                                 Width="16" Height="16" Margin="0,1,0,0" Background="Transparent" BorderBrush="Transparent">

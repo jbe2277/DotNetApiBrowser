@@ -30,8 +30,8 @@ namespace Waf.DotNetApiBrowser.Presentation.Controls
 
         public string Code
         {
-            get { return (string)GetValue(CodeProperty); }
-            set { SetValue(CodeProperty, value); }
+            get => (string)GetValue(CodeProperty);
+            set => SetValue(CodeProperty, value);
         }
 
         protected override void OnTextChanged(EventArgs e)

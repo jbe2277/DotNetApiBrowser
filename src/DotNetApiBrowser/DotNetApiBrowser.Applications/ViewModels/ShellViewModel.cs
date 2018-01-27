@@ -34,6 +34,8 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
 
         public ICommand CloseAssemblyApiCommand { get; set; }
 
+        public ICommand InfoCommand { get; set; }
+
         public IReadOnlyList<CodeEditorViewModel> CodeEditorViewModels { get; set; }
 
         public CodeEditorViewModel SelectedCodeEditorViewModel
@@ -44,8 +46,8 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
         
         public bool IsApplicationBusy
         {
-            get { return isApplicationBusy; }
-            private set { SetProperty(ref isApplicationBusy, value); }
+            get => isApplicationBusy;
+            private set => SetProperty(ref isApplicationBusy, value);
         }
         
         public void Show()

@@ -9,6 +9,8 @@
                 <ResourceDictionary Source="Resources/ControlResources.xaml"/>
                 <ResourceDictionary Source="Resources/CodeEditorResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
+            <BitmapSource x:Key="AppIcon">Resources/Images/Application.ico</BitmapSource>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

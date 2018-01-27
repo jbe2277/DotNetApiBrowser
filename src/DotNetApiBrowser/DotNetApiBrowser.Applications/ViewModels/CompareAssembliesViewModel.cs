@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using System.Threading.Tasks;
 using System.Waf.Applications;
 using System.Windows.Input;
@@ -11,49 +10,22 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
     [Export, PartCreationPolicy(CreationPolicy.NonShared)]
     public class CompareAssembliesViewModel : ViewModel<ICompareAssembliesView>
     {
-        private AssemblyInfo selectedAssembly1;
-        private AssemblyInfo selectedAssembly2;
-        private string diffToolPath;
-        private string diffToolArguments;
         private bool isClosing;
 
         [ImportingConstructor]
         public CompareAssembliesViewModel(ICompareAssembliesView view) : base(view)
         {
+            Model = new CompareAssembliesDataModel();
         }
+
+        public CompareAssembliesDataModel Model { get; }
 
         public ICommand CompareCommand { get; set; }
-
-        public IReadOnlyList<AssemblyInfo> AvailableAssemblies { get; set; }
-        
-        public AssemblyInfo SelectedAssembly1
-        {
-            get { return selectedAssembly1; }
-            set { SetProperty(ref selectedAssembly1, value); }
-        }
-
-        public AssemblyInfo SelectedAssembly2
-        {
-            get { return selectedAssembly2; }
-            set { SetProperty(ref selectedAssembly2, value); }
-        }
-        
-        public string DiffToolPath
-        {
-            get { return diffToolPath; }
-            set { SetProperty(ref diffToolPath, value); }
-        }
-        
-        public string DiffToolArguments
-        {
-            get { return diffToolArguments; }
-            set { SetProperty(ref diffToolArguments, value); }
-        }
         
         public bool IsClosing
         {
-            get { return isClosing; }
-            set { SetProperty(ref isClosing, value); }
+            get => isClosing;
+            set => SetProperty(ref isClosing, value);
         }
 
         public Task ShowDialogAsync(object ownerWindow)

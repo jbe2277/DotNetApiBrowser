@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,7 +14,7 @@ namespace Waf.DotNetApiBrowser.Presentation.Views
         public OpenFromNugetWizard()
         {
             InitializeComponent();
-            Closing += ClosingHandler;
+            Closed += ClosedHandler;
         }
         
         public Task ShowDialogAsync(object ownerWindow)
@@ -30,7 +29,7 @@ namespace Waf.DotNetApiBrowser.Presentation.Views
             return showDialogCompletionSource.Task;
         }
 
-        private void ClosingHandler(object sender, CancelEventArgs e)
+        private void ClosedHandler(object sender, EventArgs e)
         {
             showDialogCompletionSource.SetResult(null);
             showDialogCompletionSource = null;

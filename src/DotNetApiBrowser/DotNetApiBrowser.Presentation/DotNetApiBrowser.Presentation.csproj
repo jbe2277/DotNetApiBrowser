@@ -39,6 +39,12 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\Images\Application.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\App.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
@@ -62,6 +68,7 @@
     <Compile Include="Controls\CodeHighlightColors.cs" />
     <Compile Include="Controls\CodeHighlighter.cs" />
     <Compile Include="Controls\CodeHighlightingColorizer.cs" />
+    <Compile Include="Converters\AssemblyInfoToToolTipConverter.cs" />
     <Compile Include="Converters\DownloadCountConverter.cs" />
     <Compile Include="Converters\NugetAssemblyPathConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
@@ -72,6 +79,9 @@
     </Compile>
     <Compile Include="Views\CompareAssembliesWindow.xaml.cs">
       <DependentUpon>CompareAssembliesWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\InfoWindow.xaml.cs">
+      <DependentUpon>InfoWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\OpenFromNugetWizard.xaml.cs">
       <DependentUpon>OpenFromNugetWizard.xaml</DependentUpon>
@@ -99,6 +109,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Properties\App.manifest">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeAnalysis.AssemblyReaders\CodeAnalysis.AssemblyReaders.csproj">
@@ -146,6 +159,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\InfoWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\OpenFromNugetWizard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -163,6 +180,8 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\Images\Application.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

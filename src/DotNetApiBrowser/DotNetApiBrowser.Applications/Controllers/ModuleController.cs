@@ -21,15 +21,18 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         private readonly ExportFactory<CompareAssembliesController> compareAssembliesController;
         private readonly Lazy<ShellViewModel> shellViewModel;
         private readonly ExportFactory<CodeEditorViewModel> codeEditorViewModel;
-        private readonly AsyncDelegateCommand openFileCommand;
+        private readonly ExportFactory<InfoViewModel> infoViewModel;
+        private readonly DelegateCommand openFileCommand;
         private readonly AsyncDelegateCommand openFromNugetCommand;
         private readonly DelegateCommand compareAssembliesCommand;
         private readonly DelegateCommand closeAssemblyApiCommand;
+        private readonly DelegateCommand infoCommand;
         private readonly ObservableCollection<CodeEditorViewModel> codeEditorViewModels;
 
         [ImportingConstructor]
         public ModuleController(IMessageService messageService, IFileDialogService fileDialogService, ExportFactory<OpenFromNugetController> openFromNugetController,
-            ExportFactory<CompareAssembliesController> compareAssembliesController, Lazy<ShellViewModel> shellViewModel, ExportFactory<CodeEditorViewModel> codeEditorViewModel)
+            ExportFactory<CompareAssembliesController> compareAssembliesController, Lazy<ShellViewModel> shellViewModel, ExportFactory<CodeEditorViewModel> codeEditorViewModel,
+            ExportFactory<InfoViewModel> infoViewModel)
         {
             this.messageService = messageService;
             this.fileDialogService = fileDialogService;
@@ -37,10 +40,12 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             this.compareAssembliesController = compareAssembliesController;
             this.shellViewModel = shellViewModel;
             this.codeEditorViewModel = codeEditorViewModel;
-            openFileCommand = new AsyncDelegateCommand(OpenFile);
+            this.infoViewModel = infoViewModel;
+            openFileCommand = new DelegateCommand(OpenFile);
             openFromNugetCommand = new AsyncDelegateCommand(OpenFromNuget);
             compareAssembliesCommand = new DelegateCommand(CompareAssemblies);
             closeAssemblyApiCommand = new DelegateCommand(CloseAssemblyApi);
+            infoCommand = new DelegateCommand(ShowInfo);
             codeEditorViewModels = new ObservableCollection<CodeEditorViewModel>();
         }
 
@@ -56,6 +61,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             ShellViewModel.OpenFromNugetCommand = openFromNugetCommand;
             ShellViewModel.CompareAssembliesCommand = compareAssembliesCommand;
             ShellViewModel.CloseAssemblyApiCommand = closeAssemblyApiCommand;
+            ShellViewModel.InfoCommand = infoCommand;
             ShellViewModel.CodeEditorViewModels = codeEditorViewModels;
             ShellViewModel.Show();
         }
@@ -64,7 +70,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
         {
         }
 
-        private async Task OpenFile()
+        private async void OpenFile()
         {
             var assemblyFileType = new FileType(".NET Assembly (*.dll, *.exe)", ".dll;*.exe");
             var allFileType = new FileType("All files (*.*)", ".*");
@@ -75,7 +81,8 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             {
                 using (ShellViewModel.SetApplicationBusy())
                 {
-                    AddAndSelectAssemblyApi(result.FileName, await Task.Run(() => AssemblyReader.Read(result.FileName)));
+                    var assemblyApi = await Task.Run(() => AssemblyReader.Read(result.FileName));
+                    AddAndSelectAssemblyApi(result.FileName, assemblyApi.version, assemblyApi.api);
                 }
             }
             catch (Exception e)
@@ -92,7 +99,8 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
                 if (result.assemblyStream == null) return;
                 using (ShellViewModel.SetApplicationBusy())
                 {
-                    AddAndSelectAssemblyApi(result.fileName, await Task.Run(() => AssemblyReader.Read(result.assemblyStream, null)));
+                    var assemblyApi = await Task.Run(() => AssemblyReader.Read(result.assemblyStream, null));
+                    AddAndSelectAssemblyApi(result.fileName, assemblyApi.version, assemblyApi.api);
                 }
             }
         }
@@ -110,12 +118,18 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             codeEditorViewModels.Remove(ShellViewModel.SelectedCodeEditorViewModel);
         }
 
-        private void AddAndSelectAssemblyApi(string fileName, string assemblyApi)
+        private void AddAndSelectAssemblyApi(string fileName, Version assemblyVersion, string assemblyApi)
         {
             var viewModel = codeEditorViewModel.CreateExport().Value;
-            viewModel.AssemblyInfo = new AssemblyInfo(fileName, Path.GetFileNameWithoutExtension(fileName), assemblyApi);
+            viewModel.AssemblyInfo = new AssemblyInfo(fileName, Path.GetFileNameWithoutExtension(fileName), assemblyVersion, assemblyApi);
             codeEditorViewModels.Add(viewModel);
             ShellViewModel.SelectedCodeEditorViewModel = viewModel;
+        }
+
+        private void ShowInfo()
+        {
+            var viewModel = infoViewModel.CreateExport().Value;
+            viewModel.ShowDialog(ShellViewModel.View);
         }
     }
 }

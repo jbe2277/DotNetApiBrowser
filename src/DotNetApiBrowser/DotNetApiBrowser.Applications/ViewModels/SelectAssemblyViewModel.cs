@@ -19,14 +19,14 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
         
         public IReadOnlyList<ZipArchiveEntry> Assemblies
         {
-            get { return assemblies; }
-            set { SetProperty(ref assemblies, value); }
+            get => assemblies;
+            set => SetProperty(ref assemblies, value);
         }
         
         public ZipArchiveEntry SelectedAssembly
         {
-            get { return selectedAssembly; }
-            set { SetProperty(ref selectedAssembly, value); }
+            get => selectedAssembly;
+            set => SetProperty(ref selectedAssembly, value);
         }
     }
 }

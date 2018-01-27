@@ -7,8 +7,7 @@ namespace Waf.CodeAnalysis.AssemblyReaders
 {
     internal static class RoslynHelper
     {
-        private static readonly string[] attributesToExclude = new[]
-        {
+        private static readonly string[] attributesToExclude = {
             "System.Diagnostics.CodeAnalysis.SuppressMessageAttribute",
             "System.Runtime.CompilerServices.IteratorStateMachine",
             "System.Runtime.CompilerServices.AsyncStateMachine",

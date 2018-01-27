@@ -62,7 +62,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             }
             finally
             {
-                selectAssemblyViewModel.Assemblies?.FirstOrDefault()?.Archive.Dispose();
+                selectAssemblyViewModel.Assemblies?.FirstOrDefault()?.Archive?.Dispose();
                 getNugetPackagesCancellation?.Cancel();
                 getNugetPackagesCancellation?.Dispose();
                 downloadNugetPackageCancellation?.Cancel();
@@ -102,7 +102,7 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             openFromNugetViewModel.ContentView = selectAssemblyViewModel.View;
             if (updateSelectAssemblyView)
             {
-                selectAssemblyViewModel.Assemblies?.FirstOrDefault()?.Archive.Dispose();
+                selectAssemblyViewModel.Assemblies?.FirstOrDefault()?.Archive?.Dispose();
                 selectAssemblyViewModel.Assemblies = null;
                 selectAssemblyViewModel.SelectedAssembly = null;
                 try
@@ -216,13 +216,13 @@ namespace Waf.DotNetApiBrowser.Applications.Controllers
             return (await resource.SearchAsync(searchText, new SearchFilter(includePrerelease), 0, 50, new Logger(), cancellationToken).ConfigureAwait(false)).ToArray();
         }
 
-        private async Task<IReadOnlyList<VersionInfo>> GetVersionInfos(IPackageSearchMetadata packageSearchMetadata)
+        private static async Task<IReadOnlyList<VersionInfo>> GetVersionInfos(IPackageSearchMetadata packageSearchMetadata)
         {
             if (packageSearchMetadata == null) return Array.Empty<VersionInfo>();
             return (await packageSearchMetadata.GetVersionsAsync().ConfigureAwait(false)).Reverse().ToArray();
         }
 
-        private async Task<ZipArchive> DownloadNugetPackage(string packageId, string version, CancellationToken cancellationToken)
+        private static async Task<ZipArchive> DownloadNugetPackage(string packageId, string version, CancellationToken cancellationToken)
         {
             using (var client = new HttpClient())
             {
