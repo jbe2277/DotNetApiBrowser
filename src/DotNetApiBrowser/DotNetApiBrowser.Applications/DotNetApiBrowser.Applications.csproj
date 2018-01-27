@@ -53,6 +53,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IEnvironmentService.cs" />
+    <Compile Include="TaskHelper.cs" />
     <Compile Include="ViewModels\CodeEditorViewModel.cs" />
     <Compile Include="ViewModels\CompareAssembliesViewModel.cs" />
     <Compile Include="ViewModels\OpenFromNugetViewModel.cs" />
@@ -70,10 +71,6 @@
     <ProjectReference Include="..\CodeAnalysis.AssemblyReaders\CodeAnalysis.AssemblyReaders.csproj">
       <Project>{3a4bc29d-072c-4f92-a3aa-e0a66b3098df}</Project>
       <Name>CodeAnalysis.AssemblyReaders</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DotNetApiBrowser.Domain\DotNetApiBrowser.Domain.csproj">
-      <Project>{f9fcdf37-3247-43fc-8e01-6a133d619418}</Project>
-      <Name>DotNetApiBrowser.Domain</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -109,10 +109,6 @@
       <Project>{54019b73-ded4-42f6-a58a-5a02e5eea016}</Project>
       <Name>DotNetApiBrowser.Applications</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DotNetApiBrowser.Domain\DotNetApiBrowser.Domain.csproj">
-      <Project>{f9fcdf37-3247-43fc-8e01-6a133d619418}</Project>
-      <Name>DotNetApiBrowser.Domain</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AvalonEdit">

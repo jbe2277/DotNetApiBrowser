@@ -8,7 +8,7 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.Text;
-using Waf.DotNetApiBrowser.Domain;
+using Waf.DotNetApiBrowser.Applications;
 
 namespace Waf.DotNetApiBrowser.Presentation.Controls
 {

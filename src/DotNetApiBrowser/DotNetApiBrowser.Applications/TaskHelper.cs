@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Waf.DotNetApiBrowser.Domain
+namespace Waf.DotNetApiBrowser.Applications
 {
     public static class TaskHelper
     {

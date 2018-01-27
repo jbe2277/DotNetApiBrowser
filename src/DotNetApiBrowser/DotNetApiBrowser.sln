@@ -13,8 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetApiBrowser.Domain", "DotNetApiBrowser.Domain\DotNetApiBrowser.Domain.csproj", "{F9FCDF37-3247-43FC-8E01-6A133D619418}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetApiBrowser.Applications", "DotNetApiBrowser.Applications\DotNetApiBrowser.Applications.csproj", "{54019B73-DED4-42F6-A58A-5A02E5EEA016}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeAnalysis.AssemblyReaders", "CodeAnalysis.AssemblyReaders\CodeAnalysis.AssemblyReaders.csproj", "{3A4BC29D-072C-4F92-A3AA-E0A66B3098DF}"
@@ -29,10 +27,6 @@ Global
 		{017C2BA1-F291-40F8-8523-BD8AD4FC747B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{017C2BA1-F291-40F8-8523-BD8AD4FC747B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{017C2BA1-F291-40F8-8523-BD8AD4FC747B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F9FCDF37-3247-43FC-8E01-6A133D619418}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F9FCDF37-3247-43FC-8E01-6A133D619418}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F9FCDF37-3247-43FC-8E01-6A133D619418}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F9FCDF37-3247-43FC-8E01-6A133D619418}.Release|Any CPU.Build.0 = Release|Any CPU
 		{54019B73-DED4-42F6-A58A-5A02E5EEA016}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{54019B73-DED4-42F6-A58A-5A02E5EEA016}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54019B73-DED4-42F6-A58A-5A02E5EEA016}.Release|Any CPU.ActiveCfg = Release|Any CPU
