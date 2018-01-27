@@ -24,15 +24,15 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels
 
         public ICommand ShowWebsiteCommand => showWebsiteCommand;
 
-        public string ProductName => ApplicationInfo.ProductName;
+        public static string ProductName => ApplicationInfo.ProductName;
 
-        public string Version => ApplicationInfo.Version;
+        public static string Version => ApplicationInfo.Version;
 
-        public string OSVersion => Environment.OSVersion.ToString();
+        public static string OSVersion => Environment.OSVersion.ToString();
 
-        public string NetVersion { get; } = GetDotNetVersion();
+        public static string NetVersion { get; } = GetDotNetVersion();
 
-        public bool Is64BitProcess => Environment.Is64BitProcess;
+        public static bool Is64BitProcess => Environment.Is64BitProcess;
 
 
         public void ShowDialog(object owner)

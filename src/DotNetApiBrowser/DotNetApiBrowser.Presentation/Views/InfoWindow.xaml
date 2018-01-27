@@ -36,34 +36,34 @@
                 </Grid.RowDefinitions>
 
                 <Label Content="Product" Grid.Row="0"/>
-                <Label Content="{Binding ProductName}" Grid.Column="1"/>
+                <Label Content="{Binding ProductName, Mode=OneTime}" Grid.Column="1"/>
 
                 <Label Content="Version" Grid.Row="1"/>
-                <Label Content="{Binding Version}" Grid.Column="1" Grid.Row="1"/>
+                <Label Content="{Binding Version, Mode=OneTime}" Grid.Column="1" Grid.Row="1"/>
 
                 <Label Content="License" Grid.Row="2"/>
                 <Label Grid.Column="1" Grid.Row="2">
-                    <Hyperlink Command="{Binding ShowWebsiteCommand}" CommandParameter="https://github.com/jbe2277/DotNetApiBrowser/blob/master/LICENSE">The MIT License (MIT)</Hyperlink>
+                    <Hyperlink Command="{Binding ShowWebsiteCommand, Mode=OneTime}" CommandParameter="https://github.com/jbe2277/DotNetApiBrowser/blob/master/LICENSE">The MIT License (MIT)</Hyperlink>
                 </Label>
 
                 <Label Content="Website" Grid.Row="3"/>
                 <Label Grid.Column="1" Grid.Row="3">
-                    <Hyperlink Command="{Binding ShowWebsiteCommand}" CommandParameter="https://jbe2277.github.io/DotNetApiBrowser">jbe2277.github.io/DotNetApiBrowser</Hyperlink>
+                    <Hyperlink Command="{Binding ShowWebsiteCommand, Mode=OneTime}" CommandParameter="https://jbe2277.github.io/DotNetApiBrowser">jbe2277.github.io/DotNetApiBrowser</Hyperlink>
                 </Label>
 
                 <Label Content="Operating System" Grid.Row="4"/>
-                <Label Content="{Binding OSVersion}" Grid.Column="1" Grid.Row="4"/>
+                <Label Content="{Binding OSVersion, Mode=OneTime}" Grid.Column="1" Grid.Row="4"/>
 
                 <Label Content=".Net Framework" Grid.Row="5"/>
                 <Label Grid.Column="1" Grid.Row="5">
                     <TextBlock>
-                        <Run Text="{Binding NetVersion, Mode=OneWay}"/>
+                        <Run Text="{Binding NetVersion, Mode=OneTime}"/>
                         <Run>
                             <Run.Style>
                                 <Style TargetType="Run">
                                     <Setter Property="Text" Value="(32 Bit)"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Is64BitProcess}" Value="True">
+                                        <DataTrigger Binding="{Binding Is64BitProcess, Mode=OneTime}" Value="True">
                                             <Setter Property="Text" Value="(64 Bit)"/>
                                         </DataTrigger>
                                     </Style.Triggers>
