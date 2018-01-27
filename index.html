@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Waf DotNetApiBrowser</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* Move down content because we have a fixed navbar that is 50px tall */
+        body {
+            padding-top: 50px;
+            padding-bottom: 30px;
+        }
+
+        li {
+            margin-bottom: 3px;
+        }
+
+        .nav li {
+            margin-bottom: 0px;
+        }
+        
+        .jumbotron {
+            padding-top: 10px;
+            padding-bottom: 0px;
+        }
+
+        .jumbotron h1 {
+            font-size: 47px;
+        }
+
+        .jumbotron p {
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        @media only screen and (max-width: 767px) {
+            .jumbotron {
+                margin-bottom: 10px;
+                padding-top: 20px;
+            }
+
+            .jumbotron h1 {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">DotNetApiBrowser</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="https://jbe2277.github.io/DotNetApiBrowser/clickonce/DotNetApiBrowser.application">Run application &raquo;</a></li>
+                    <li><a href="https://github.com/jbe2277/DotNetApiBrowser">Source code</a></li>
+                    <li><a href="https://github.com/jbe2277/DotNetApiBrowser/blob/master/LICENSE">License</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="jumbotron">
+        <div class="container">
+            <h1>Waf DotNetApiBrowser</h1>
+            <p>Windows application for browsing the public API of .NET Assemblies and NuGet packages.</p>
+            <p><a class="btn btn-primary btn-lg" href="https://jbe2277.github.io/DotNetApiBrowser/clickonce/DotNetApiBrowser.application" role="button">Run application &raquo;</a></p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row featurette">
+            <div class="col-md-5">
+                <h3 class="featurette-heading">Features</h3>
+                <ul>
+                    <li>Summarize the public API of a .NET Assembly.</li>
+                    <li>Open assembly from Disk or load the assembly from a NuGet package.</li>
+                    <li>Compare two opened assemblies with an external Diff Tool.
+                        <ul>
+                            <li>Can be used to compare different versions of an assembly or NuGet package.</li>
+                            <li>By default an installed Visual Studio will be used as Diff Tool.</li>
+                        </ul>
+                    </li>
+                    <li>Provides syntax highlighting.</li>
+                    <li>Integrated Find feature within the editor.</li>
+                </ul>
+                <p><br /></p>
+                <h3>Used Components</h3>
+                <ul>
+                    <li><a href="https://github.com/dotnet/roslyn">Microsoft.CodeAnalysis</a> (Roslyn)</li>
+                    <li><a href="http://www.avalonedit.net/">AvalonEdit</a></li>
+                    <li><a href="https://github.com/jbe2277/waf">Win Application Framework (WAF)</a></li>
+                </ul>
+                <p><br /></p>
+            </div>
+            <div class="col-md-7">
+                <img class="featurette-image img-responsive center-block" title="Waf DotNetApiBrowser" alt="Waf DotNetApiBrowser" src="images/DotNetApiBrowser.png">
+                <p><br /></p>
+                <img class="featurette-image img-responsive center-block" title="DotNetApiBrowser Compare" alt="DotNetApiBrowser Compare" src="images/VSDiff.png">
+            </div>
+        </div>
+    </div>
+
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+</body>
+</html>
