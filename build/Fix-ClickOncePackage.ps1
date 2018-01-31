@@ -15,15 +15,22 @@ function Format-Xml([xml]$xml)
     $stringWriter.Dispose();
 }
 
-function Get-FileHash-Sha256([String] $FileName)
+function Get-FileHash-Sha256([String] $fileName)
 {
     Add-Type -Assembly System.Security
     $sha = New-Object System.Security.Cryptography.SHA256Managed
-    $fileStream = [System.IO.File]::Open($FileName, "open", "read")
+    $fileStream = [System.IO.File]::Open($fileName, "open", "read")
     $bytes = $sha.ComputeHash($fileStream)
     $fileStream.Dispose()
     $base64Hash = [System.Convert]::ToBase64String($bytes)
     return $base64Hash
+}
+
+function Set-XmlAttribute($node, $name, $value)
+{
+  $attribute = $node.OwnerDocument.CreateAttribute($name)
+  $attribute.Value = $value
+  [void]$node.Attributes.SetNamedItem($attribute)
 }
 
 
@@ -61,10 +68,12 @@ $MissingDllFiles | % { Copy-Item -Path $_ -Destination (-Join("$PublishFolderApp
 $LastDependency = $ExeManifest.assembly.dependency | Where { $_.dependentAssembly.dependencyType -eq "install" } | Select-Object -Last 1
 $MissingDllFiles | % { 
     $NewDependency = $LastDependency.Clone()
-    $NewDependency.dependentAssembly.codebase=[string](Split-Path $_ -Leaf)
+    $AssemblyName = [Reflection.AssemblyName]::GetAssemblyName($_)
+    $NewDependency.dependentAssembly.codebase = [string](Split-Path $_ -Leaf)
     $NewDependency.dependentAssembly.size = (Get-Item $_).Length.ToString()
-    $NewDependency.dependentAssembly.assemblyIdentity.name = [io.path]::GetFileNameWithoutExtension([string](Split-Path $_ -Leaf))
-    $NewDependency.dependentAssembly.assemblyIdentity.version = ([Reflection.AssemblyName]::GetAssemblyName($_).Version).ToString()
+    $NewDependency.dependentAssembly.assemblyIdentity.name = $AssemblyName.Name
+    $NewDependency.dependentAssembly.assemblyIdentity.version = $AssemblyName.Version.ToString()
+    Set-XmlAttribute $NewDependency.dependentAssembly.assemblyIdentity "publicKeyToken" ([BitConverter]::ToString($AssemblyName.GetPublicKeyToken())).Replace("-", "")
     $NewDependency.dependentAssembly.hash.DigestValue = Get-FileHash-Sha256($_)
     [void]$ExeManifest.assembly.InsertAfter($NewDependency, $LastDependency)
     $LastDependency = $NewDependency
@@ -75,6 +84,6 @@ $ExeManifest.Save($ExeManifestFile)
 [xml] $AppManifest = Get-Content $AppManifestFile
 $AppManifest.assembly.dependency.dependentAssembly.hash.DigestValue = Get-FileHash-Sha256($ExeManifestFile)
 $AppManifest.Save($AppManifestFile)
-
+Copy-Item -Path $AppManifestFile -Destination $PublishFolder
 
 Write-Host "> Finish. Added $($MissingDllFiles.Length) files."
