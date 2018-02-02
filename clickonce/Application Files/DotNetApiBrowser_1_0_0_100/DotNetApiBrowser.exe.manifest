@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
-  <asmv1:assemblyIdentity name="DotNetApiBrowser.exe" version="1.0.0.92" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
+  <asmv1:assemblyIdentity name="DotNetApiBrowser.exe" version="1.0.0.100" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
   <description asmv2:iconFile="Resources\Images\Application.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="DotNetApiBrowser" version="1.0.0.92" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="DotNetApiBrowser" version="1.0.0.100" language="neutral" processorArchitecture="msil" />
     <commandLine file="DotNetApiBrowser.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DotNetApiBrowser.exe" size="186368">
-      <assemblyIdentity name="DotNetApiBrowser" version="1.0.0.92" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DotNetApiBrowser.exe" size="186880">
+      <assemblyIdentity name="DotNetApiBrowser" version="1.0.0.100" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>ciEGJhsL2vSjPqeebFaGyk3i4GWBarWnS8xodc6th+w=</dsig:DigestValue>
+        <dsig:DigestValue>MOs1SZXujGCX1C9As9PIN8Ix7ageGunI6VxObx1tlGc=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -1040,25 +1040,25 @@
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Waf.CodeAnalysis.AssemblyReaders.dll" size="24064">
-      <assemblyIdentity name="Waf.CodeAnalysis.AssemblyReaders" version="1.0.0.92" language="neutral" processorArchitecture="msil" />
+      <assemblyIdentity name="Waf.CodeAnalysis.AssemblyReaders" version="1.0.0.100" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>z13wTUec44tHkxZVU3SstwNH1OxfdxeNTvlI2/ImqDE=</dsig:DigestValue>
+        <dsig:DigestValue>BC9MwDWzDBGocVpreBZJxgJoxt7Onu81OBQgA8RBgI4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Waf.DotNetApiBrowser.Applications.dll" size="48128">
-      <assemblyIdentity name="Waf.DotNetApiBrowser.Applications" version="1.0.0.92" language="neutral" processorArchitecture="msil" />
+      <assemblyIdentity name="Waf.DotNetApiBrowser.Applications" version="1.0.0.100" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>sHT7xpZrW96WPopXIUp7kKS+qKn0OfM+iDXyEhugros=</dsig:DigestValue>
+        <dsig:DigestValue>jHXNzDXfBBXADfqi9SRSHSpzpsuXgfVxY0cHCZTHyjI=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
