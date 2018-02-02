@@ -58,9 +58,9 @@ Write-Host "> Application: $AppManifestFile"
 [string[]] $DllListPublishFolder = Get-ChildItem -Path "$PublishFolderAppFiles\*.dll.deploy"
 
 
-$MissingDllFiles = [Linq.Enumerable]::Where($DllListBinariesFolder, 
+$MissingDllFiles = [Linq.Enumerable]::ToArray([Linq.Enumerable]::Where($DllListBinariesFolder, 
     [Func[string,bool]] { param($x); return [Linq.Enumerable]::All($DllListPublishFolder, 
-        [Func[string,bool]] { param($y); return -Join((Split-Path $x -Leaf), ".deploy") -ne (Split-Path $y -Leaf) }) })
+        [Func[string,bool]] { param($y); return -Join((Split-Path $x -Leaf), ".deploy") -ne (Split-Path $y -Leaf) }) }))
 $MissingDllFiles | % { Copy-Item -Path $_ -Destination (-Join("$PublishFolderAppFiles\", (Split-Path $_ -Leaf), ".deploy")) }
 
 
