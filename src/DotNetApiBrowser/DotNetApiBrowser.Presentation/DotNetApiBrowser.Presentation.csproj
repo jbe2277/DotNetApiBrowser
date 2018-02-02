@@ -29,8 +29,8 @@
     <ProductName>Waf DotNetApiBrowser</ProductName>
     <PublisherName>Waf</PublisherName>
     <SuiteName>Waf DotNetApiBrowser</SuiteName>
-    <ApplicationRevision>92</ApplicationRevision>
-    <ApplicationVersion>1.0.0.92</ApplicationVersion>
+    <ApplicationRevision>100</ApplicationRevision>
+    <ApplicationVersion>1.0.0.100</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
