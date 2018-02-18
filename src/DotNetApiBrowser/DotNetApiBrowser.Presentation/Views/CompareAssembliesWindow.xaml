@@ -64,10 +64,10 @@
                 <TextBlock Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="3" Text="Diff Tool" FontWeight="SemiBold"/>
 
                 <TextBlock Grid.Column="0" Grid.Row="8" Text="Tool path:"/>
-                <TextBox Grid.Column="2" Grid.Row="8" Text="{Binding Model.DiffToolPath}"/>
+                <TextBox Grid.Column="2" Grid.Row="8" Text="{Binding Model.DiffToolPath, UpdateSourceTrigger=PropertyChanged}"/>
                 
                 <TextBlock Grid.Column="0" Grid.Row="10" Text="Arguments:"/>
-                <TextBox Grid.Column="2" Grid.Row="10" Text="{Binding Model.DiffToolArguments}"/>
+                <TextBox Grid.Column="2" Grid.Row="10" Text="{Binding Model.DiffToolArguments, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
             <ProgressBar IsIndeterminate="true" Visibility="{Binding IsClosing, Converter={StaticResource BoolToVisibilityConverter}}"/>
         </Grid>
