@@ -9,7 +9,7 @@
 
     <waf:InvertBooleanConverter x:Key="InvertBooleanConverter"/>
 
-    <c:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+    <waf:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
 
     <c:DownloadCountConverter x:Key="DownloadCountConverter"/>
 

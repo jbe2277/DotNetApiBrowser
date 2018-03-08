@@ -102,7 +102,6 @@
     <Compile Include="Converters\AssemblyInfoToToolTipConverter.cs" />
     <Compile Include="Converters\DownloadCountConverter.cs" />
     <Compile Include="Converters\NugetAssemblyPathConverter.cs" />
-    <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Services\EnvironmentService.cs" />
     <Compile Include="Views\CodeEditorView.xaml.cs">
