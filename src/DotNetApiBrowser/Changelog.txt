@@ -1,5 +1,9 @@
 Changelog
 ---------
 
+Version 1.0.1.100 (Release)
+- Update the Win Application Framework (WAF) to 4.2.0.
+
+
 Version 1.0.0.100 (Release)
 - Initial version.
