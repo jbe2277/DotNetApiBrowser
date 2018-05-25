@@ -40,7 +40,7 @@ namespace Waf.DotNetApiBrowser.Presentation.Views
                 else
                 {
                     // Delay removing the wait cursor so that the UI has finished its work as well.
-                    Dispatcher.InvokeAsync(() => Mouse.OverrideCursor = null, DispatcherPriority.ApplicationIdle);
+                    Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, (Action)(() => Mouse.OverrideCursor = null));
                 }
             }
         }
