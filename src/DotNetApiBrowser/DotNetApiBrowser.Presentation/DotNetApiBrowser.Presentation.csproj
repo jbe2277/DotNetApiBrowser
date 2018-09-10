@@ -161,7 +161,7 @@
       <Version>2.6.1</Version>
     </PackageReference>
     <PackageReference Include="System.Waf.Wpf">
-      <Version>4.3.0-alpha1</Version>
+      <Version>4.3.0-alpha2</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -606,7 +606,7 @@
       <IncludeHash>True</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
-    <PublishFile Include="System.Waf.Core">
+	<PublishFile Include="System.Waf.Core">
       <Visible>False</Visible>
       <Group>
       </Group>
