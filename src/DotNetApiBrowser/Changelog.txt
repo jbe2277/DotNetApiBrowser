@@ -1,6 +1,13 @@
 Changelog
 ---------
 
+Version 1.1.0.100 (Release)
+- Update Microsoft.CodeAnalysis to 2.9.0.
+- Update the Win Application Framework (WAF) to 4.3.0.
+- Add recognition of .NET 4.7.2 in Info dialog.
+- Fix blurring error template rectangle
+
+
 Version 1.0.1.100 (Release)
 - Update the Win Application Framework (WAF) to 4.2.0.
 
