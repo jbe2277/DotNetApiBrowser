@@ -1,6 +1,10 @@
 Changelog
 ---------
 
+Version 1.1.1.100 (Release)
+- Update the Win Application Framework (WAF) to 5.0.0-alpha1.
+
+
 Version 1.1.0.100 (Release)
 - Update Microsoft.CodeAnalysis to 2.9.0.
 - Update the Win Application Framework (WAF) to 4.3.0.
