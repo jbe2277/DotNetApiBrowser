@@ -1,6 +1,5 @@
 ﻿using NuGet.Common;
 using NuGet.Configuration;
-using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
@@ -20,10 +19,10 @@ internal class OpenFromNugetController
     private readonly SelectAssemblyViewModel selectAssemblyViewModel;
     private readonly DelegateCommand backCommand;
     private readonly DelegateCommand nextCommand;
-    private PackageSearchResource searchResource;
-    private (string fileName, Stream assemblyStream) result;
-    private CancellationTokenSource getNugetPackagesCancellation;
-    private CancellationTokenSource downloadNugetPackageCancellation;
+    private PackageSearchResource? searchResource;
+    private (string? fileName, Stream? assemblyStream) result;
+    private CancellationTokenSource? getNugetPackagesCancellation;
+    private CancellationTokenSource? downloadNugetPackageCancellation;
     private bool updateSelectAssemblyView;
 
     [ImportingConstructor]
@@ -33,16 +32,14 @@ internal class OpenFromNugetController
         this.openFromNugetViewModel = openFromNugetViewModel;
         this.selectPackageViewModel = selectPackageViewModel;
         this.selectAssemblyViewModel = selectAssemblyViewModel;
-        selectPackageViewModel.NugetPackages = Array.Empty<IPackageSearchMetadata>();
-        selectPackageViewModel.PackageVersions = Array.Empty<VersionInfo>();
+        backCommand = new(Back, CanBack);
+        nextCommand = new(Next, CanNext);
         openFromNugetViewModel.PropertyChanged += OpenFromNugetViewModelPropertyChanged;
         selectPackageViewModel.PropertyChanged += SelectPackageViewModelPropertyChanged;
         selectAssemblyViewModel.PropertyChanged += SelectAssemblyViewModelPropertyChanged;
-        backCommand = new DelegateCommand(Back, CanBack);
-        nextCommand = new DelegateCommand(Next, CanNext);
     }
 
-    public async Task<(string fileName, Stream assemblyStream)> RunAsync(object ownerWindow)
+    public async Task<(string? fileName, Stream? assemblyStream)> RunAsync(object ownerWindow)
     {
         try
         {
@@ -64,10 +61,7 @@ internal class OpenFromNugetController
 
     private bool CanBack() => openFromNugetViewModel.ContentView == selectAssemblyViewModel.View;
 
-    private void Back()
-    {
-        ShowSelectPackageView();
-    }
+    private void Back() => ShowSelectPackageView();
 
     private bool CanNext() => openFromNugetViewModel.ContentView == selectPackageViewModel.View && selectPackageViewModel.SelectedPackageVersion != null
         || openFromNugetViewModel.ContentView == selectAssemblyViewModel.View && selectAssemblyViewModel.SelectedAssembly != null;
@@ -84,10 +78,7 @@ internal class OpenFromNugetController
         }
     }
 
-    private void ShowSelectPackageView()
-    {
-        openFromNugetViewModel.ContentView = selectPackageViewModel.View;
-    }
+    private void ShowSelectPackageView() => openFromNugetViewModel.ContentView = selectPackageViewModel.View;
 
     private async void ShowSelectAssemblyView()
     {
@@ -95,19 +86,19 @@ internal class OpenFromNugetController
         if (updateSelectAssemblyView)
         {
             selectAssemblyViewModel.Assemblies?.FirstOrDefault()?.Archive?.Dispose();
-            selectAssemblyViewModel.Assemblies = null;
+            selectAssemblyViewModel.Assemblies = [];
             selectAssemblyViewModel.SelectedAssembly = null;
             try
             {
                 downloadNugetPackageCancellation?.Cancel();
                 downloadNugetPackageCancellation = new CancellationTokenSource();
-                var nugetPackage = await DownloadNugetPackage(selectPackageViewModel.SelectedNugetPackage.Identity.Id, selectPackageViewModel.SelectedPackageVersion.Version.ToString(), 
+                var nugetPackage = await DownloadNugetPackage(selectPackageViewModel.SelectedNugetPackage!.Identity.Id, selectPackageViewModel.SelectedPackageVersion!.Version.ToString(), 
                     downloadNugetPackageCancellation.Token);
-                selectAssemblyViewModel.Assemblies = nugetPackage.Entries.Where(x => new[] { ".dll", ".exe" }.Contains(Path.GetExtension(x.Name))).ToArray();
+                selectAssemblyViewModel.Assemblies = nugetPackage.Entries.Where(x => Path.GetExtension(x.Name) is ".dll" or ".exe").ToArray();
             }
             catch (Exception ex)
             {
-                selectAssemblyViewModel.Assemblies = Array.Empty<ZipArchiveEntry>();
+                selectAssemblyViewModel.Assemblies = [];
                 ShowError("Error: " + ex.Message);
             }
             selectAssemblyViewModel.SelectedAssembly = selectAssemblyViewModel.Assemblies.FirstOrDefault();
@@ -118,7 +109,7 @@ internal class OpenFromNugetController
     private async void Finish()
     {
         openFromNugetViewModel.IsClosing = true;
-        result = (selectAssemblyViewModel.SelectedAssembly.Name, new MemoryStream());
+        result = (selectAssemblyViewModel.SelectedAssembly!.Name, new MemoryStream());
         try
         {
             await selectAssemblyViewModel.SelectedAssembly.Open().CopyToAsync(result.assemblyStream);
@@ -137,20 +128,16 @@ internal class OpenFromNugetController
         if (openFromNugetViewModel.IsVisible) messageService.ShowError(openFromNugetViewModel.View, message);
     }
 
-    private void OpenFromNugetViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+    private void OpenFromNugetViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(openFromNugetViewModel.ContentView))
-        {
-            backCommand.RaiseCanExecuteChanged();
-            nextCommand.RaiseCanExecuteChanged();
-        }
+        if (e.PropertyName == nameof(openFromNugetViewModel.ContentView)) DelegateCommand.RaiseCanExecuteChanged(backCommand, nextCommand);
     }
 
-    private async void SelectPackageViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+    private async void SelectPackageViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (new[] { nameof(selectPackageViewModel.SearchText), nameof(selectPackageViewModel.IncludePrerelease) }.Contains(e.PropertyName))
+        if (e.PropertyName is nameof(selectPackageViewModel.SearchText) or nameof(selectPackageViewModel.IncludePrerelease))
         {
-            selectPackageViewModel.NugetPackages = null;
+            selectPackageViewModel.NugetPackages = [];
             selectPackageViewModel.SelectedNugetPackage = null;
             try
             {
@@ -160,22 +147,22 @@ internal class OpenFromNugetController
             }
             catch (Exception ex)
             {
-                selectPackageViewModel.NugetPackages = Array.Empty<IPackageSearchMetadata>();
+                selectPackageViewModel.NugetPackages = [];
                 ShowError("Error: " + ex.Message);
             }
             selectPackageViewModel.SelectedNugetPackage = selectPackageViewModel.NugetPackages.FirstOrDefault();
         }
         else if (e.PropertyName == nameof(selectPackageViewModel.SelectedNugetPackage))
         {
-            selectPackageViewModel.PackageVersions = null;
+            selectPackageViewModel.PackageVersions = [];
             selectPackageViewModel.SelectedPackageVersion = null;
             try
             {
-                selectPackageViewModel.PackageVersions = await GetVersionInfos(selectPackageViewModel.SelectedNugetPackage);
+                selectPackageViewModel.PackageVersions = await GetVersionInfos(selectPackageViewModel.SelectedNugetPackage!);
             }
             catch (Exception ex)
             {
-                selectPackageViewModel.PackageVersions = Array.Empty<VersionInfo>();
+                selectPackageViewModel.PackageVersions = [];
                 ShowError("Error: " + ex.Message);
             }
             selectPackageViewModel.SelectedPackageVersion = selectPackageViewModel.PackageVersions.FirstOrDefault();
@@ -187,54 +174,44 @@ internal class OpenFromNugetController
         }
     }
 
-    private void SelectAssemblyViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+    private void SelectAssemblyViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(selectAssemblyViewModel.SelectedAssembly))
-        {
-            nextCommand.RaiseCanExecuteChanged();
-        }
+        if (e.PropertyName == nameof(selectAssemblyViewModel.SelectedAssembly)) nextCommand.RaiseCanExecuteChanged();
     }
 
     private async Task<PackageSearchResource> GetPackageSearchResource()
     {
-        return searchResource = searchResource ?? await new SourceRepository(new PackageSource("https://api.nuget.org/v3/index.json"), Repository.Provider.GetCoreV3())
+        return searchResource ??= await new SourceRepository(new PackageSource("https://api.nuget.org/v3/index.json"), Repository.Provider.GetCoreV3())
             .GetResourceAsync<PackageSearchResource>();
     }
 
-    private async Task<IReadOnlyList<IPackageSearchMetadata>> GetNugetPackages(string searchText, bool includePrerelease, CancellationToken cancellationToken)
+    private async Task<IReadOnlyList<IPackageSearchMetadata>> GetNugetPackages(string? searchText, bool includePrerelease, CancellationToken cancellation)
     {
-        if (string.IsNullOrEmpty(searchText)) return Array.Empty<IPackageSearchMetadata>();
+        if (string.IsNullOrEmpty(searchText)) return [];
         var resource = await GetPackageSearchResource().ConfigureAwait(false);
-        return (await resource.SearchAsync(searchText, new SearchFilter(includePrerelease), 0, 50, new Logger(), cancellationToken).ConfigureAwait(false)).ToArray();
+        return (await resource.SearchAsync(searchText, new SearchFilter(includePrerelease), 0, 50, new Logger(), cancellation).ConfigureAwait(false)).ToArray();
     }
 
     private static async Task<IReadOnlyList<VersionInfo>> GetVersionInfos(IPackageSearchMetadata packageSearchMetadata)
     {
-        if (packageSearchMetadata == null) return Array.Empty<VersionInfo>();
+        if (packageSearchMetadata == null) return [];
         return (await packageSearchMetadata.GetVersionsAsync().ConfigureAwait(false)).Reverse().ToArray();
     }
 
-    private static async Task<ZipArchive> DownloadNugetPackage(string packageId, string version, CancellationToken cancellationToken)
+    private static async Task<ZipArchive> DownloadNugetPackage(string packageId, string version, CancellationToken cancellation)
     {
-        using (var client = new HttpClient())
-        {
-            var response = await client.GetAsync($"https://www.nuget.org/api/v2/package/{packageId}/{version}", cancellationToken).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            var packageStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            return new ZipArchive(packageStream, ZipArchiveMode.Read, leaveOpen: false);
-        }
+        using var client = new HttpClient();
+        var response = await client.GetAsync(new Uri($"https://www.nuget.org/api/v2/package/{packageId}/{version}"), cancellation).ConfigureAwait(false);
+        response.EnsureSuccessStatusCode();
+        var packageStream = await response.Content.ReadAsStreamAsync(cancellation).ConfigureAwait(false);
+        return new ZipArchive(packageStream, ZipArchiveMode.Read, leaveOpen: false);
     }
 
 
-    private sealed class Logger : ILogger
+    private sealed class Logger : LoggerBase
     {
-        public void LogDebug(string data) => Trace.WriteLine($"DEBUG: {data}");
-        public void LogVerbose(string data) => Trace.WriteLine($"VERBOSE: {data}");
-        public void LogInformation(string data) => Trace.WriteLine($"INFORMATION: {data}");
-        public void LogMinimal(string data) => Trace.WriteLine($"MINIMAL: {data}");
-        public void LogWarning(string data) => Trace.WriteLine($"WARNING: {data}");
-        public void LogError(string data) => Trace.WriteLine($"ERROR: {data}");
-        public void LogInformationSummary(string data) => Trace.WriteLine($"INFO SUMMARY: {data}");
-        public void LogErrorSummary(string data) => Trace.WriteLine($"ERROR SUMMARY: {data}");
+        public override void Log(ILogMessage message) => Trace.WriteLine($"{message.WarningLevel} {message.Code} {message.Message}");
+
+        public override Task LogAsync(ILogMessage message) { Log(message); return Task.CompletedTask; }
     }
 }

@@ -8,8 +8,8 @@ namespace Waf.DotNetApiBrowser.Applications.ViewModels;
 [Export, PartCreationPolicy(CreationPolicy.NonShared)]
 public class SelectAssemblyViewModel : ViewModel<ISelectAssemblyView>
 {
-    private IReadOnlyList<ZipArchiveEntry> assemblies;
-    private ZipArchiveEntry selectedAssembly;
+    private IReadOnlyList<ZipArchiveEntry> assemblies = [];
+    private ZipArchiveEntry? selectedAssembly;
 
     [ImportingConstructor]
     public SelectAssemblyViewModel(ISelectAssemblyView view) : base(view)
@@ -22,7 +22,7 @@ public class SelectAssemblyViewModel : ViewModel<ISelectAssemblyView>
         set => SetProperty(ref assemblies, value);
     }
     
-    public ZipArchiveEntry SelectedAssembly
+    public ZipArchiveEntry? SelectedAssembly
     {
         get => selectedAssembly;
         set => SetProperty(ref selectedAssembly, value);
