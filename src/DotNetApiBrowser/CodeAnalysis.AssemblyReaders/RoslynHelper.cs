@@ -8,7 +8,9 @@ internal static class RoslynHelper
         "System.Diagnostics.CodeAnalysis.SuppressMessageAttribute",
         "System.Runtime.CompilerServices.IteratorStateMachine",
         "System.Runtime.CompilerServices.AsyncStateMachine",
-        "System.ComponentModel.EditorBrowsable"
+        "System.ComponentModel.EditorBrowsable",
+        "System.Runtime.CompilerServices.NullableAttribute",
+        "System.Runtime.CompilerServices.NullableContextAttribute"
     ];
 
     public static IEnumerable<AttributeData> DefaultFilter(this IEnumerable<AttributeData> attributes)

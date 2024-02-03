@@ -36,19 +36,17 @@ internal class ModuleController : IModuleController
         this.shellViewModel = shellViewModel;
         this.codeEditorViewModel = codeEditorViewModel;
         this.infoViewModel = infoViewModel;
-        openFileCommand = new DelegateCommand(OpenFile);
-        openFromNugetCommand = new AsyncDelegateCommand(OpenFromNuget);
-        compareAssembliesCommand = new DelegateCommand(CompareAssemblies);
-        closeAssemblyApiCommand = new DelegateCommand(CloseAssemblyApi);
-        infoCommand = new DelegateCommand(ShowInfo);
-        codeEditorViewModels = new ObservableCollection<CodeEditorViewModel>();
+        openFileCommand = new(OpenFile);
+        openFromNugetCommand = new(OpenFromNuget);
+        compareAssembliesCommand = new(CompareAssemblies);
+        closeAssemblyApiCommand = new(CloseAssemblyApi);
+        infoCommand = new(ShowInfo);
+        codeEditorViewModels = [];
     }
 
     private ShellViewModel ShellViewModel => shellViewModel.Value;
 
-    public void Initialize()
-    {
-    }
+    public void Initialize() { }
 
     public void Run()
     {
@@ -61,9 +59,7 @@ internal class ModuleController : IModuleController
         ShellViewModel.Show();
     }
 
-    public void Shutdown()
-    {
-    }
+    public void Shutdown() { }
 
     private async void OpenFile()
     {

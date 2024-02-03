@@ -5,8 +5,8 @@ namespace Waf.DotNetApiBrowser.Applications.DataModels;
 
 public class CompareAssembliesDataModel : ValidatableModel
 {
-    private AssemblyInfo selectedAssembly1;
-    private AssemblyInfo selectedAssembly2;
+    private AssemblyInfo? selectedAssembly1;
+    private AssemblyInfo? selectedAssembly2;
     private string diffToolPath;
     private string diffToolArguments;
 
@@ -15,14 +15,14 @@ public class CompareAssembliesDataModel : ValidatableModel
     public bool NotEnoughAvailableAssemblies => AvailableAssemblies?.Count < 2;
 
     [Required, Display(Name =  "Assembly 1")]
-    public AssemblyInfo SelectedAssembly1
+    public AssemblyInfo? SelectedAssembly1
     {
         get => selectedAssembly1;
         set => SetPropertyAndValidate(ref selectedAssembly1, value);
     }
 
     [Required, Display(Name = "Assembly 2")]
-    public AssemblyInfo SelectedAssembly2
+    public AssemblyInfo? SelectedAssembly2
     {
         get => selectedAssembly2;
         set => SetPropertyAndValidate(ref selectedAssembly2, value);

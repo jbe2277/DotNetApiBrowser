@@ -51,8 +51,8 @@ internal class CompareAssembliesController
         compareAssembliesViewModel.IsClosing = true;
         var assemblyApi1FileName = environmentService.GetTempFileName();
         var assemblyApi2FileName = environmentService.GetTempFileName();
-        var task1 = WriteTextAsync(assemblyApi1FileName, compareAssembliesViewModel.Model.SelectedAssembly1.AssemblyApi);
-        var task2 = WriteTextAsync(assemblyApi2FileName, compareAssembliesViewModel.Model.SelectedAssembly2.AssemblyApi);
+        var task1 = WriteTextAsync(assemblyApi1FileName, compareAssembliesViewModel.Model.SelectedAssembly1!.AssemblyApi);
+        var task2 = WriteTextAsync(assemblyApi2FileName, compareAssembliesViewModel.Model.SelectedAssembly2!.AssemblyApi);
 
         try
         {
@@ -101,7 +101,7 @@ internal class CompareAssembliesController
         compareAssembliesViewModel.Close();
     }
 
-    private void CompareAssembliesDataModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+    private void CompareAssembliesDataModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(CompareAssembliesDataModel.HasErrors))
         {
