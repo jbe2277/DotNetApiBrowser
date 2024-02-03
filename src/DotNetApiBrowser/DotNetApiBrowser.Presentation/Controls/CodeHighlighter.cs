@@ -3,6 +3,7 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.Text;
+using System.Waf.Foundation;
 using System.Windows.Threading;
 
 namespace Waf.DotNetApiBrowser.Presentation.Controls;

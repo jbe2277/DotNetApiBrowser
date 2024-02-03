@@ -4,16 +4,16 @@ namespace Waf.CodeAnalysis.AssemblyReaders;
 
 internal static class RoslynHelper
 {
-    private static readonly string[] attributesToExclude = {
+    private static readonly string[] attributesToExclude = [
         "System.Diagnostics.CodeAnalysis.SuppressMessageAttribute",
         "System.Runtime.CompilerServices.IteratorStateMachine",
         "System.Runtime.CompilerServices.AsyncStateMachine",
         "System.ComponentModel.EditorBrowsable"
-    };
+    ];
 
     public static IEnumerable<AttributeData> DefaultFilter(this IEnumerable<AttributeData> attributes)
     {
-        return attributes.Where(x => !attributesToExclude.Any(y => x.AttributeClass.ToString().StartsWith(y, StringComparison.Ordinal)));
+        return attributes.Where(x => !attributesToExclude.Any(y => x.AttributeClass?.ToString()?.StartsWith(y, StringComparison.Ordinal) == true));
     }
 
     public static string ToCSharpString(this INamespaceSymbol symbol)
@@ -21,23 +21,23 @@ internal static class RoslynHelper
         return symbol.IsGlobalNamespace ? "<global namespace>" : string.Join(".", GetNamespaceParts(symbol));
     }
 
-    public static string ToCSharpString(this AttributeData attributeData, ISymbol attachedTo = null)
+    public static string? ToCSharpString(this AttributeData attributeData, ISymbol? attachedTo = null)
     {
         var x = attributeData.ToString();
-        var result = x.EndsWith("Attribute", StringComparison.Ordinal) ? x.Substring(0, x.Length - 9) : x.Replace("Attribute(", "(");
-        return attachedTo == null ? result : result.OptimizeNamespaces(attachedTo.ContainingNamespace);
+        var result = x is null ? null : x.EndsWith("Attribute", StringComparison.Ordinal) ? x[..^9] : x.Replace("Attribute(", "(", StringComparison.Ordinal);
+        return attachedTo is null ? result : result?.OptimizeNamespaces(attachedTo.ContainingNamespace);
     }
 
     public static string ToCSharpString(this ITypeSymbol symbol)
     {
         var defaultFormat = symbol.ToDisplayString(SymbolDisplayFormats.DefaultFormat);
-        var defaultParts = defaultFormat.Split(new[] { "where" }, StringSplitOptions.RemoveEmptyEntries);
+        var defaultParts = defaultFormat.Split([ "where" ], StringSplitOptions.RemoveEmptyEntries);
         var containingTypePath = GetContainingTypePath(symbol).ToArray();
         var firstDefaultPart = defaultParts[0];
         if (containingTypePath.Length > 1)  // Nested type
         {
             var nestedTypePath = string.Join(".", containingTypePath.Reverse().Select(x => x.Name));
-            firstDefaultPart = firstDefaultPart.Replace(nestedTypePath, symbol.Name);  // Replace with short type name.
+            firstDefaultPart = firstDefaultPart?.Replace(nestedTypePath, symbol.Name, StringComparison.Ordinal);  // Replace with short type name.
         }
 
         var results = new[] {
@@ -46,8 +46,8 @@ internal static class RoslynHelper
             firstDefaultPart,
             AddPrefix(": ", string.Join(", ", new[] { symbol.BaseType }.Concat(symbol.Interfaces)
                 .Where(x => x != null && !x.SpecialType.AnyItem(SpecialType.System_Object, SpecialType.System_ValueType, SpecialType.System_Enum, SpecialType.System_Delegate, SpecialType.System_MulticastDelegate))
-                .Select(x => x.ToDisplayString(SymbolDisplayFormats.BaseTypeFormat)))),
-        }.Concat(defaultParts.Skip(1).Select(x => "where" + x)).Select(x => x.Trim(' '));
+                .Select(x => x!.ToDisplayString(SymbolDisplayFormats.BaseTypeFormat)))),
+        }.Concat(defaultParts.Skip(1).Select(x => "where" + x)).Select(x => x?.Trim(' '));
         return string.Join(" ", results.Where(x => !string.IsNullOrEmpty(x))).OptimizeNamespaces(symbol.ContainingNamespace);
     }
 
@@ -127,7 +127,7 @@ internal static class RoslynHelper
         var namespaceParts = GetNamespaceParts(namespaceContext).ToArray();
         for (int i = namespaceParts.Length; i > 0; i--)
         {
-            declaration = declaration.Replace(string.Join(".", namespaceParts.Take(i)) + ".", "");
+            declaration = declaration.Replace(string.Join(".", namespaceParts.Take(i)) + ".", "", StringComparison.Ordinal);
         }
         return declaration;
 

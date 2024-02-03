@@ -9,22 +9,21 @@ public static class AssemblyReader
 {
     private static readonly string nl = Environment.NewLine;
     private static MetadataReference Mscorlib { get; } = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
-    private static MetadataReference SystemRuntime { get; } = MetadataReference.CreateFromFile(Path.Combine(Path.GetDirectoryName(typeof(object).Assembly.Location), "System.Runtime.dll"));
+    private static MetadataReference SystemRuntime { get; } = MetadataReference.CreateFromFile(Path.Combine(Path.GetDirectoryName(typeof(object).Assembly.Location)!, "System.Runtime.dll"));
 
-    public static (Version version, string api) Read(string assemblyPath, bool showXmlComments = false)
+    public static (Version version, string api) Read(string assemblyPath)
     {
-        var documentation = showXmlComments ? new FileBasedXmlDocumentationProvider(Path.ChangeExtension(assemblyPath, ".xml")) : null;
         using var fileStream = new FileStream(assemblyPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-        return Read(fileStream, documentation);
+        return Read(fileStream);
     }
 
-    public static (Version version, string api) Read(Stream assemblyStream, DocumentationProvider documentation)
+    public static (Version version, string api) Read(Stream assemblyStream)
     {
-        var assemblyReference = MetadataReference.CreateFromStream(assemblyStream, documentation: documentation);
+        var assemblyReference = MetadataReference.CreateFromStream(assemblyStream);
 
         var tree = SyntaxFactory.ParseSyntaxTree(@"class Program { static void Main() { } }");
         var compilation = CSharpCompilation.Create("MyCompilation").AddReferences(Mscorlib).AddReferences(SystemRuntime).AddReferences(assemblyReference).AddSyntaxTrees(tree);
-        var assemblySymbol = (IAssemblySymbol)compilation.GetAssemblyOrModuleSymbol(assemblyReference) ?? throw new InvalidOperationException("Could not read the assembly.");
+        var assemblySymbol = (IAssemblySymbol?)compilation.GetAssemblyOrModuleSymbol(assemblyReference) ?? throw new InvalidOperationException("Could not read the assembly.");
         var result = new StringBuilder();
         result.AppendLine("// " + assemblySymbol);
 
@@ -96,7 +95,7 @@ public static class AssemblyReader
 
         try
         {
-            doc = string.Join(nl, XDocument.Parse("<Root>" + doc + "</Root>").Root.Elements()
+            doc = string.Join(nl, XDocument.Parse("<Root>" + doc + "</Root>").Root!.Elements()
                     .Select(x => indentString + "/// " + x.ToString()));
         }
         catch (Exception)

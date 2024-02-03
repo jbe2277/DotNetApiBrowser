@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Waf.Foundation;
 
 namespace Waf.DotNetApiBrowser.Applications.DataModels;
 

@@ -94,7 +94,7 @@ internal class ModuleController : IModuleController
             if (result.assemblyStream == null) return;
             using (ShellViewModel.SetApplicationBusy())
             {
-                var assemblyApi = await Task.Run(() => AssemblyReader.Read(result.assemblyStream, null));
+                var assemblyApi = await Task.Run(() => AssemblyReader.Read(result.assemblyStream));
                 AddAndSelectAssemblyApi(result.fileName, assemblyApi.version, assemblyApi.api);
             }
         }
