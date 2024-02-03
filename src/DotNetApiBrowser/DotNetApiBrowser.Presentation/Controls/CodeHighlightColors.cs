@@ -6,15 +6,15 @@ namespace Waf.DotNetApiBrowser.Presentation.Controls;
 
 internal static class CodeHighlightColors
 {
-    private static readonly CachedHighlightingColor defaultHighlightingColor = new CachedHighlightingColor(Colors.Black);
-    private static readonly CachedHighlightingColor typeHighlightingColor = new CachedHighlightingColor(Colors.Teal);
-    private static readonly CachedHighlightingColor commentHighlightingColor = new CachedHighlightingColor(Colors.Green);
-    private static readonly CachedHighlightingColor xmlCommentHighlightingColor = new CachedHighlightingColor(Colors.Gray);
-    private static readonly CachedHighlightingColor keywordHighlightingColor = new CachedHighlightingColor(Colors.Blue);
-    private static readonly CachedHighlightingColor preprocessorKeywordHighlightingColor = new CachedHighlightingColor(Colors.Gray);
-    private static readonly CachedHighlightingColor stringHighlightingColor = new CachedHighlightingColor(Colors.Maroon);
+    private static readonly CachedHighlightingColor defaultHighlightingColor = new(Colors.Black);
+    private static readonly CachedHighlightingColor typeHighlightingColor = new(Colors.Teal);
+    private static readonly CachedHighlightingColor commentHighlightingColor = new(Colors.Green);
+    private static readonly CachedHighlightingColor xmlCommentHighlightingColor = new(Colors.Gray);
+    private static readonly CachedHighlightingColor keywordHighlightingColor = new(Colors.Blue);
+    private static readonly CachedHighlightingColor preprocessorKeywordHighlightingColor = new(Colors.Gray);
+    private static readonly CachedHighlightingColor stringHighlightingColor = new(Colors.Maroon);
 
-    private static readonly Dictionary<string, CachedHighlightingColor> highlightingColorsMap = new Dictionary<string, CachedHighlightingColor>
+    private static readonly Dictionary<string, CachedHighlightingColor> highlightingColorsMap = new()
     {
         [ClassificationTypeNames.ClassName] = typeHighlightingColor,
         [ClassificationTypeNames.StructName] = typeHighlightingColor,
@@ -42,10 +42,9 @@ internal static class CodeHighlightColors
 
     public static HighlightingColor DefaultHighlightingColor => defaultHighlightingColor;
 
-    public static HighlightingColor GetHighlightingColor(string classificationTypeName)
-    {
-        return GetHighlightingColorCore(classificationTypeName);
-    }
+    public static Color GetColor(string classificationTypeName) => GetHighlightingColorCore(classificationTypeName).Color;
+
+    public static HighlightingColor GetHighlightingColor(string classificationTypeName) => GetHighlightingColorCore(classificationTypeName);
 
     private static CachedHighlightingColor GetHighlightingColorCore(string classificationTypeName)
     {
@@ -53,12 +52,16 @@ internal static class CodeHighlightColors
         return color ?? defaultHighlightingColor;
     }
 
+
     private sealed class CachedHighlightingColor : HighlightingColor
     {
         public CachedHighlightingColor(Color color)
         {
+            Color = color;
             Foreground = new SimpleHighlightingBrush(color);
             Freeze();
         }
+
+        public Color Color { get; }
     }
 }

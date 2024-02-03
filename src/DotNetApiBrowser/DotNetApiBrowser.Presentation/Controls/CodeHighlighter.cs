@@ -3,30 +3,33 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.Text;
+using System.Windows.Threading;
 
 namespace Waf.DotNetApiBrowser.Presentation.Controls;
 
 public sealed class CodeHighlighter : IHighlighter
 {
     private readonly TaskScheduler uiTaskScheduler;
-    private readonly Workspace workspace;
-    private readonly Func<Task<SemanticModel>> getSemanticModel;
-    private readonly List<VersionedHighlightedLine> cachedLines;
+    private readonly Func<Document> getDocument;
+    private readonly List<VersionedHighlightedLine?> cachedLines;
+    private readonly Task initialDelayTask;
 
-    public CodeHighlighter(IDocument document, Workspace workspace, Func<Task<SemanticModel>> getSemanticModel)
+    public CodeHighlighter(IDocument document, Func<Document> getDocument)
     {
         uiTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
         Document = document;
-        this.workspace = workspace;
-        this.getSemanticModel = getSemanticModel;
+        this.getDocument = getDocument;
         cachedLines = [];
+        initialDelayTask = CreateInitialDelayTask();
     }
 
     public IDocument Document { get; }
 
     public HighlightingColor DefaultTextColor => CodeHighlightColors.DefaultHighlightingColor;
-    
-    public event HighlightingStateChangedEventHandler HighlightingStateChanged;
+
+    public event HighlightingStateChangedEventHandler? HighlightingStateChanged;
+
+    private static async Task CreateInitialDelayTask() => await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
 
     public HighlightedLine HighlightLine(int lineNumber)
     {
@@ -49,10 +52,7 @@ public sealed class CodeHighlighter : IHighlighter
 
         foreach (var line in cachedLines.ToArray().Reverse())
         {
-            if (!line?.DocumentLine?.IsDeleted == true)
-            {
-                break;
-            }
+            if (!line?.DocumentLine?.IsDeleted != false) break;
             cachedLines.Remove(line);
         }
 
@@ -65,6 +65,7 @@ public sealed class CodeHighlighter : IHighlighter
         {
             await Task.Run(async () =>
             {
+                await initialDelayTask.ConfigureAwait(false);
                 if (CancelUpdate(Document, line)) return;
 
                 var documentLine = line.DocumentLine;
@@ -77,10 +78,8 @@ public sealed class CodeHighlighter : IHighlighter
                     var newLineSections = new List<HighlightedSection>();
                     foreach (var classifiedSpan in spans)
                     {
-                        if (IsOutsideLine(documentLine, classifiedSpan.TextSpan.Start, classifiedSpan.TextSpan.Length))
-                        {
-                            continue;
-                        }
+                        if (IsOutsideLine(documentLine, classifiedSpan.TextSpan.Start, classifiedSpan.TextSpan.Length)) continue;
+
                         newLineSections.Add(new HighlightedSection
                         {
                             Color = CodeHighlightColors.GetHighlightingColor(classifiedSpan.ClassificationType),
@@ -106,43 +105,34 @@ public sealed class CodeHighlighter : IHighlighter
         return line.CancellationToken.IsCancellationRequested || line.Version == null || !currentVersion.BelongsToSameDocumentAs(line.Version) || currentVersion.CompareAge(line.Version) != 0;
     }
 
-    private static bool IsOutsideLine(IDocumentLine documentLine, int offset, int length)
-    {
-        return offset < documentLine.Offset || offset + length > documentLine.EndOffset;
-    }
+    private static bool IsOutsideLine(IDocumentLine documentLine, int offset, int length) => offset < documentLine.Offset || offset + length > documentLine.EndOffset;
 
     private async Task<IEnumerable<ClassifiedSpan>> GetClassifiedSpansAsync(IDocumentLine documentLine, CancellationToken cancellationToken)
     {
-        int textLength = await TaskHelper.Run(() => Document.TextLength, uiTaskScheduler).ConfigureAwait(false);
-        if (textLength >= documentLine.Offset + documentLine.TotalLength)
+        var document = getDocument();
+        var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+        if (text.Length >= documentLine.Offset + documentLine.TotalLength)
         {
-            var semanticModel = await getSemanticModel().ConfigureAwait(false);
-            return Classifier.GetClassifiedSpans(semanticModel, new TextSpan(documentLine.Offset, documentLine.TotalLength), workspace, cancellationToken);
+            return await Classifier.GetClassifiedSpansAsync(document, new TextSpan(documentLine.Offset, documentLine.TotalLength), cancellationToken).ConfigureAwait(false);
         }
-        return Array.Empty<ClassifiedSpan>();
+        return [];
     }
 
     public void BeginHighlighting() { }
 
     public void EndHighlighting() { }
 
-    public HighlightingColor GetNamedColor(string name) => null;
+    public HighlightingColor? GetNamedColor(string name) => null;
 
-    public IEnumerable<HighlightingColor> GetColorStack(int lineNumber) => null;
-    
+    public IEnumerable<HighlightingColor>? GetColorStack(int lineNumber) => null;
+
     public void UpdateHighlightingState(int lineNumber) { }
 
-    public void Dispose()
-    {
-        cachedLines.Clear();
-    }
+    public void Dispose() => cachedLines.Clear();
 
     private static void EnlargeList<T>(List<T> list, int newCount)
     {
-        if (newCount > list.Count)
-        {
-            list.AddRange(Enumerable.Repeat(default(T), newCount - list.Count));
-        }
+        if (newCount > list.Count) list.AddRange(Enumerable.Repeat(default(T)!, newCount - list.Count));
     }
 
 
@@ -150,8 +140,7 @@ public sealed class CodeHighlighter : IHighlighter
     {
         private readonly CancellationTokenSource cancellationTokenSource;
 
-        public VersionedHighlightedLine(IDocument document, IDocumentLine documentLine, ITextSourceVersion version, VersionedHighlightedLine oldVersion)
-            : base(document, documentLine)
+        public VersionedHighlightedLine(IDocument document, IDocumentLine documentLine, ITextSourceVersion version, VersionedHighlightedLine? oldVersion) : base(document, documentLine)
         {
             Version = version;
             cancellationTokenSource = new CancellationTokenSource();
@@ -160,11 +149,9 @@ public sealed class CodeHighlighter : IHighlighter
             {
                 foreach (var oldSection in oldVersion.Sections)
                 {
-                    if (IsOutsideLine(documentLine, oldSection.Offset, oldSection.Length))
-                    {
-                        continue;
-                    }
-                    Sections.Add(new HighlightedSection
+                    if (IsOutsideLine(documentLine, oldSection.Offset, oldSection.Length)) continue;
+
+                    Sections.Add(new()
                     {
                         Color = oldSection.Color,
                         Offset = oldSection.Offset,
@@ -177,27 +164,21 @@ public sealed class CodeHighlighter : IHighlighter
         public ITextSourceVersion Version { get; }
 
         public CancellationToken CancellationToken { get; }
-        
-        public void Cancel()
-        {
-            cancellationTokenSource.Cancel();
-        }
+
+        public void Cancel() => cancellationTokenSource.Cancel();
     }
 
     private sealed class HighlightedSectionComparer : IEqualityComparer<HighlightedSection>
     {
-        public static HighlightedSectionComparer Default { get; } = new HighlightedSectionComparer();
+        public static HighlightedSectionComparer Default { get; } = new();
 
-        public bool Equals(HighlightedSection x, HighlightedSection y)
+        public bool Equals(HighlightedSection? x, HighlightedSection? y)
         {
-            if (x == y) { return true; }
-            if (x == null || y == null) { return false; }
-            return Equals(x.Color, y.Color) && x.Length == y.Length && x.Offset == y.Offset;
+            if (ReferenceEquals(x, y)) return true;
+            if (x is null || y is null) return false;
+            return (x.Color, x.Length, x.Offset).Equals((y.Color, y.Length, y.Offset));
         }
 
-        public int GetHashCode(HighlightedSection obj)
-        {
-            return (obj.Color?.GetHashCode() ?? 0) ^ obj.Length.GetHashCode() ^ obj.Offset.GetHashCode();
-        }
+        public int GetHashCode(HighlightedSection obj) => (obj.Color, obj.Length, obj.Offset).GetHashCode();
     }
 }

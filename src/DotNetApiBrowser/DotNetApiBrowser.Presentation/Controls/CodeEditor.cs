@@ -9,6 +9,9 @@ namespace Waf.DotNetApiBrowser.Presentation.Controls;
 
 public class CodeEditor : TextEditor
 {
+    public static DependencyProperty CodeProperty { get; } = DependencyProperty.Register("Code", typeof(string), typeof(CodeEditor), new PropertyMetadata(null, 
+        propertyChangedCallback: (d, e) => ((CodeEditor)d).Text = (string)e.NewValue));
+
     private static readonly MetadataReference mscorlib = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
 
     private readonly AdhocWorkspace adhocWorkspace;
@@ -16,15 +19,14 @@ public class CodeEditor : TextEditor
 
     public CodeEditor()
     {
-        if (!WafConfiguration.IsInDesignMode)
-        {
-            adhocWorkspace = new AdhocWorkspace();
-            TextArea.TextView.LineTransformers.Insert(0, new CodeHighlightingColorizer(adhocWorkspace, () => semanticModel));
-        }
+        // TODO: This must be a Roslin document now
+        //if (!WafConfiguration.IsInDesignMode)
+        //{
+        //    adhocWorkspace = new AdhocWorkspace();
+        //    TextArea.TextView.LineTransformers.Insert(0, new CodeHighlightingColorizer(adhocWorkspace, () => semanticModel));
+        //}
         SearchPanel.Install(TextArea);
     }
-
-    public static DependencyProperty CodeProperty { get; } = DependencyProperty.Register("Code", typeof(string), typeof(CodeEditor), new PropertyMetadata(null, CodeChangedCallback));
 
     public string Code
     {
@@ -43,10 +45,5 @@ public class CodeEditor : TextEditor
             var compilation = CSharpCompilation.Create("MyCompilation").AddReferences(mscorlib).AddSyntaxTrees(tree);
             return compilation.GetSemanticModel(tree);
         });
-    }
-
-    private static void CodeChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        ((CodeEditor)d).Text = (string)e.NewValue;
     }
 }
