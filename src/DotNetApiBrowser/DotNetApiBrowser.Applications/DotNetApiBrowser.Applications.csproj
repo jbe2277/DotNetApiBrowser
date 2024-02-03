@@ -1,88 +1,16 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{54019B73-DED4-42F6-A58A-5A02E5EEA016}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <RootNamespace>Waf.DotNetApiBrowser.Applications</RootNamespace>
     <AssemblyName>Waf.DotNetApiBrowser.Applications</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\..\out\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>..\CodeAnalysis.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\..\out\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <CodeAnalysisRuleSet>..\CodeAnalysis.ruleset</CodeAnalysisRuleSet>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
+    <PackageReference Include="NuGet.Protocol.Core.v3" Version="4.2.0" />
+    <PackageReference Include="System.Waf.Wpf" Version="8.0.0-beta.1" />
   </ItemGroup>
+
   <ItemGroup>
-    <CodeAnalysisDictionary Include="..\CodeAnalysisDictionary.xml">
-      <Link>Properties\CodeAnalysisDictionary.xml</Link>
-    </CodeAnalysisDictionary>
-    <Compile Include="..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="Controllers\CompareAssembliesController.cs" />
-    <Compile Include="Controllers\ModuleController.cs" />
-    <Compile Include="Controllers\OpenFromNugetController.cs" />
-    <Compile Include="DataModels\AssemblyInfo.cs" />
-    <Compile Include="DataModels\CompareAssembliesDataModel.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\IEnvironmentService.cs" />
-    <Compile Include="ViewModels\CodeEditorViewModel.cs" />
-    <Compile Include="ViewModels\CompareAssembliesViewModel.cs" />
-    <Compile Include="ViewModels\InfoViewModel.cs" />
-    <Compile Include="ViewModels\OpenFromNugetViewModel.cs" />
-    <Compile Include="ViewModels\SelectAssemblyViewModel.cs" />
-    <Compile Include="ViewModels\SelectPackageViewModel.cs" />
-    <Compile Include="ViewModels\ShellViewModel.cs" />
-    <Compile Include="Views\ICodeEditorView.cs" />
-    <Compile Include="Views\ICompareAssembliesView.cs" />
-    <Compile Include="Views\IInfoView.cs" />
-    <Compile Include="Views\IOpenFromNugetView.cs" />
-    <Compile Include="Views\ISelectAssemblyView.cs" />
-    <Compile Include="Views\ISelectPackageView.cs" />
-    <Compile Include="Views\IShellView.cs" />
+    <ProjectReference Include="..\CodeAnalysis.AssemblyReaders\CodeAnalysis.AssemblyReaders.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CodeAnalysis.AssemblyReaders\CodeAnalysis.AssemblyReaders.csproj">
-      <Project>{3a4bc29d-072c-4f92-a3aa-e0a66b3098df}</Project>
-      <Name>CodeAnalysis.AssemblyReaders</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="NuGet.Protocol.Core.v3">
-      <Version>4.2.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Waf.Wpf">
-      <Version>5.0.0</Version>
-    </PackageReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

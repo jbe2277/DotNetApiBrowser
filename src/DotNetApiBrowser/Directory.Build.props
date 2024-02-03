@@ -1,0 +1,23 @@
+﻿<Project>
+  <PropertyGroup>
+    <Product>Waf DotNetApiBrowser</Product>
+    <Company>Waf</Company>
+    <Copyright>Copyright © 2017-2024 jbe2277</Copyright>
+    <Version>2.0.0.100</Version>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+    <NoWarn>$(NoWarn);CA1014</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Using Include="System.Collections.ObjectModel" />
+    <Using Include="System.Collections.Specialized" />
+    <Using Include="System.ComponentModel" />
+    <Using Include="System.Diagnostics.CodeAnalysis" />
+    <Using Include="System.Waf.Foundation" />
+  </ItemGroup>
+</Project>

@@ -1,16 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34408.163
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetApiBrowser.Presentation", "DotNetApiBrowser.Presentation\DotNetApiBrowser.Presentation.csproj", "{017C2BA1-F291-40F8-8523-BD8AD4FC747B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{95405563-701B-40BB-BF06-B631DEB81164}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		Changelog.txt = Changelog.txt
-		CodeAnalysisDictionary.xml = CodeAnalysisDictionary.xml
-		CodeCoverage.runsettings = CodeCoverage.runsettings
-		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
+		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetApiBrowser.Applications", "DotNetApiBrowser.Applications\DotNetApiBrowser.Applications.csproj", "{54019B73-DED4-42F6-A58A-5A02E5EEA016}"
