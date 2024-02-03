@@ -1,0 +1,13 @@
+name: DotNetApiBrowser
+on:
+  push:
+    paths:
+    - 'src/**'
+    - '.github/workflows/**'
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      run: dotnet build ./src/DotNetApiBrowser/DotNetApiBrowser.sln -c Release
