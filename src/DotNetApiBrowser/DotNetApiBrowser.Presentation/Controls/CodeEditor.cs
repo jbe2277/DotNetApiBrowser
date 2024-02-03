@@ -1,30 +1,25 @@
 ﻿using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Search;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using System.Waf;
+using Microsoft.CodeAnalysis.Text;
 using System.Windows;
 
 namespace Waf.DotNetApiBrowser.Presentation.Controls;
 
 public class CodeEditor : TextEditor
 {
-    public static DependencyProperty CodeProperty { get; } = DependencyProperty.Register("Code", typeof(string), typeof(CodeEditor), new PropertyMetadata(null, 
-        propertyChangedCallback: (d, e) => ((CodeEditor)d).Text = (string)e.NewValue));
+    public static DependencyProperty CodeProperty { get; } = DependencyProperty.Register("Code", typeof(string), typeof(CodeEditor));
 
-    private static readonly MetadataReference mscorlib = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
-
-    private readonly AdhocWorkspace adhocWorkspace;
-    private Task<SemanticModel> semanticModel;
+    private readonly AdhocWorkspace workspace;
+    private readonly Project project;
+    private Document? document;
 
     public CodeEditor()
     {
-        // TODO: This must be a Roslin document now
-        //if (!WafConfiguration.IsInDesignMode)
-        //{
-        //    adhocWorkspace = new AdhocWorkspace();
-        //    TextArea.TextView.LineTransformers.Insert(0, new CodeHighlightingColorizer(adhocWorkspace, () => semanticModel));
-        //}
+        workspace = new AdhocWorkspace();
+        project = workspace.AddProject("AdhocProject", LanguageNames.CSharp);
+        
+        TextArea.TextView.LineTransformers.Insert(0, new CodeHighlightingColorizer(() => document ?? throw new InvalidOperationException("Document is not initialized")));
         SearchPanel.Install(TextArea);
     }
 
@@ -34,16 +29,13 @@ public class CodeEditor : TextEditor
         set => SetValue(CodeProperty, value);
     }
 
-    protected override void OnTextChanged(EventArgs e)
+    protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
     {
-        base.OnTextChanged(e);
-
-        var code = Text;
-        semanticModel = Task.Run(() =>
+        base.OnPropertyChanged(e);
+        if (e.Property == CodeProperty)
         {
-            var tree = SyntaxFactory.ParseSyntaxTree(code);
-            var compilation = CSharpCompilation.Create("MyCompilation").AddReferences(mscorlib).AddSyntaxTrees(tree);
-            return compilation.GetSemanticModel(tree);
-        });
+            Text = Code;
+            document = workspace.AddDocument(project.Id, "Adhoc.cs", SourceText.From(Code, System.Text.Encoding.UTF8));
+        }
     }
 }
