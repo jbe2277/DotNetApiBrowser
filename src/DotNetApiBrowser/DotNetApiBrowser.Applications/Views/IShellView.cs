@@ -1,11 +1,10 @@
 ﻿using System.Waf.Applications;
 
-namespace Waf.DotNetApiBrowser.Applications.Views
-{
-    public interface IShellView : IView
-    {
-        void Show();
+namespace Waf.DotNetApiBrowser.Applications.Views;
 
-        void Close();
-    }
+public interface IShellView : IView
+{
+    void Show();
+
+    void Close();
 }

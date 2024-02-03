@@ -1,11 +1,9 @@
-﻿using System.Threading.Tasks;
-using System.Waf.Applications;
+﻿using System.Waf.Applications;
 
-namespace Waf.DotNetApiBrowser.Applications.Views
+namespace Waf.DotNetApiBrowser.Applications.Views;
+
+public interface IOpenFromNugetView : IView
 {
-    public interface IOpenFromNugetView : IView
-    {
-        Task ShowDialogAsync(object ownerWindow);
-        void Close();
-    }
+    Task ShowDialogAsync(object ownerWindow);
+    void Close();
 }

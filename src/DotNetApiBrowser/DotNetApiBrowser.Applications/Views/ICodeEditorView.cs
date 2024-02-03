@@ -1,8 +1,7 @@
 ﻿using System.Waf.Applications;
 
-namespace Waf.DotNetApiBrowser.Applications.Views
+namespace Waf.DotNetApiBrowser.Applications.Views;
+
+public interface ICodeEditorView : IView
 {
-    public interface ICodeEditorView : IView
-    {
-    }
 }

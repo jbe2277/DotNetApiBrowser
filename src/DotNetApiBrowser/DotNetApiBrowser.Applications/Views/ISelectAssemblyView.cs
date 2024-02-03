@@ -1,8 +1,7 @@
 ﻿using System.Waf.Applications;
 
-namespace Waf.DotNetApiBrowser.Applications.Views
+namespace Waf.DotNetApiBrowser.Applications.Views;
+
+public interface ISelectAssemblyView : IView
 {
-    public interface ISelectAssemblyView : IView
-    {
-    }
 }

@@ -3,16 +3,15 @@ using System.Waf.Applications;
 using Waf.DotNetApiBrowser.Applications.DataModels;
 using Waf.DotNetApiBrowser.Applications.Views;
 
-namespace Waf.DotNetApiBrowser.Applications.ViewModels
+namespace Waf.DotNetApiBrowser.Applications.ViewModels;
+
+[Export, PartCreationPolicy(CreationPolicy.NonShared)]
+public class CodeEditorViewModel : ViewModel<ICodeEditorView>
 {
-    [Export, PartCreationPolicy(CreationPolicy.NonShared)]
-    public class CodeEditorViewModel : ViewModel<ICodeEditorView>
+    [ImportingConstructor]
+    public CodeEditorViewModel(ICodeEditorView view) : base(view)
     {
-        [ImportingConstructor]
-        public CodeEditorViewModel(ICodeEditorView view) : base(view)
-        {
-        }
-        
-        public AssemblyInfo AssemblyInfo { get; set; }
     }
+    
+    public AssemblyInfo AssemblyInfo { get; set; }
 }

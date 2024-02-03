@@ -1,12 +1,10 @@
-﻿using System.Threading.Tasks;
-using System.Waf.Applications;
+﻿using System.Waf.Applications;
 
-namespace Waf.DotNetApiBrowser.Applications.Views
+namespace Waf.DotNetApiBrowser.Applications.Views;
+
+public interface ICompareAssembliesView : IView
 {
-    public interface ICompareAssembliesView : IView
-    {
-        Task ShowDialogAsync(object ownerWindow);
+    Task ShowDialogAsync(object ownerWindow);
 
-        void Close();
-    }
+    void Close();
 }
